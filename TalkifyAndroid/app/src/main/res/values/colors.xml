@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Core palette -->
+    <color name="bg">#FF121212</color>
+    <color name="surface">#FF1E1E1E</color>
+    <color name="surface_hover">#FF252525</color>
+    <color name="accent">#FF00FF9C</color>
+    <color name="accent_dim">#1F00FF9C</color>
+    <color name="accent_muted">#FF3A7D44</color>
+    <color name="text_primary">#FFEAEAEA</color>
+    <color name="text_secondary">#FFA0A0A0</color>
+    <color name="text_on_accent">#FF0D0D0D</color>
+    <color name="divider">#FF2A2A2A</color>
+
+    <!-- Bubbles -->
+    <color name="bubble_sent_bg">@color/accent</color>
+    <color name="bubble_sent_text">@color/text_on_accent</color>
+    <color name="bubble_received_bg">@color/surface</color>
+    <color name="bubble_received_text">@color/text_primary</color>
+
+    <!-- System -->
+    <color name="status_bar">@color/surface</color>
+    <color name="nav_bar">@color/surface</color>
+
+    <!-- Online indicator -->
+    <color name="online_green">#FF00FF9C</color>
+    <color name="offline_gray">#FF666666</color>
+
+    <!-- Unread badge -->
+    <color name="badge_bg">@color/accent</color>
+    <color name="badge_text">@color/text_on_accent</color>
+</resources>

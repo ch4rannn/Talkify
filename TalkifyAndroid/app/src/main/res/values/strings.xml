@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Talkify</string>
+    <string name="search_hint">Search conversations…</string>
+    <string name="type_message_hint">Type a message…</string>
+    <string name="send">Send</string>
+    <string name="online">Online</string>
+    <string name="offline">Offline</string>
+    <string name="direct_messages">Direct Messages</string>
+    <string name="groups">Groups</string>
+    <string name="new_group">+ New</string>
+    <string name="create_group">Create Group</string>
+    <string name="group_name_hint">Group name…</string>
+    <string name="select_members">Select Members</string>
+    <string name="cancel">Cancel</string>
+    <string name="no_messages">No messages yet</string>
+    <string name="members_format">%d members</string>
+</resources>

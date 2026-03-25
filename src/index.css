@@ -1,0 +1,177 @@
+/* ============================================================
+   TALKIFY — Premium Design System v3
+   Navy-Slate Dark Theme · Green Accent · Inter Typeface
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+/* ---- Design Tokens ---- */
+:root {
+  /* Premium Minimal Dark Theme */
+  --bg: #0d0d0d;
+  --bg-sidebar: #141414;
+  --surface: #1c1c1c;
+  --surface-hover: #222222;
+
+  /* Accent System (Muted / Monochrome) */
+  --accent: #e5e5e5;
+  --accent-hover: #ffffff;
+  --accent-soft: #9ca3af;
+  --accent-dim: rgba(255, 255, 255, 0.08);
+  --accent-grad: #1c1c1c;
+  /* No gradients per rules */
+
+  /* Text Hierarchy */
+  --text-primary: #e5e5e5;
+  --text-secondary: #9ca3af;
+  --text-muted: #6b7280;
+  --text-on-accent: #0d0d0d;
+
+  /* Structure */
+  --divider: rgba(255, 255, 255, 0.06);
+
+  /* Depth & Shadows (Very Soft Only) */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.5);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
+  --shadow-glow: 0 0 0 rgba(0, 0, 0, 0);
+  /* Removed glowing shadows */
+
+  /* Radii */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-pill: 999px;
+
+  /* Typography */
+  --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --fs-title: 1.25rem;
+  --fs-body: 0.9375rem;
+  --fs-meta: 0.75rem;
+  --fw-regular: 400;
+  --fw-medium: 500;
+  --fw-semi: 600;
+  --fw-bold: 700;
+
+  /* 8px Grid Spacing */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+
+  --transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ---- Global Reset ---- */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+body {
+  font-family: var(--font);
+  font-size: var(--fs-body);
+  font-weight: var(--fw-regular);
+  color: var(--text-primary);
+  background: var(--bg);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+input,
+textarea,
+button {
+  font-family: inherit;
+  font-size: inherit;
+  border: none;
+  outline: none;
+  background: none;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+/* Premium Scrollbar */
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-pill);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.14);
+}
+
+/* ---- Utility ---- */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ============================================================
+   LIGHT THEME OVERRIDES
+   ============================================================ */
+[data-theme="light"] {
+  --bg: #F8FAFC;
+  --bg-sidebar: #F1F5F9;
+  --surface: #E2E8F0;
+  --surface-hover: #CBD5E1;
+
+  --accent: #16A34A;
+  --accent-hover: #15803D;
+  --accent-soft: #22C55E;
+  --accent-dim: rgba(22, 163, 74, 0.1);
+  --accent-grad: linear-gradient(135deg, #22C55E, #16A34A);
+
+  --text-primary: #1E293B;
+  --text-secondary: #64748B;
+  --text-muted: #94A3B8;
+  --text-on-accent: #FFFFFF;
+
+  --divider: rgba(0, 0, 0, 0.08);
+
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.1);
+  --shadow-glow: 0 4px 14px rgba(22, 163, 74, 0.15);
+}
+
+[data-theme="light"] body {
+  color: var(--text-primary);
+  background: var(--bg);
+}
+
+[data-theme="light"] ::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="light"] ::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.18);
+}

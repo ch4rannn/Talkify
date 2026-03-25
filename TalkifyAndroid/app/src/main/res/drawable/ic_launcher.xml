@@ -1,0 +1,13 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path
+        android:fillColor="#0D0D0D"
+        android:pathData="M0,0h108v108h-108z"/>
+    <!-- Sleek chat bubble silhouette containing a T -->
+    <path
+        android:fillColor="#E5E5E5"
+        android:pathData="M54,24c-16.57,0 -30,12.31 -30,27.5c0,8.71 4.58,16.48 11.72,21.68l-3.35,9.65c-0.34,0.98 0.58,1.9 1.56,1.56l10.82,-3.75c2.93,0.85 6.04,1.35 9.25,1.35c16.57,0 30,-12.31 30,-27.5S70.57,24 54,24zM62,45h-6v15h-4v-15h-6v-4h16v4z"/>
+</vector>

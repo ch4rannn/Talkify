@@ -1,0 +1,70 @@
+/* ---- App Layout ---- */
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  height: 100dvh;
+  width: 100%;
+  background: var(--bg);
+  overflow: hidden;
+}
+
+.app__body {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+.app__chat-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  background: var(--bg);
+}
+
+.app__no-chat {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  color: var(--text-secondary);
+  user-select: none;
+}
+
+.app__no-chat-icon {
+  font-size: 3rem;
+  color: var(--accent);
+  opacity: 0.3;
+  margin-bottom: var(--space-sm);
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 700px) {
+  .sidebar {
+    width: 72px !important;
+    min-width: 72px !important;
+  }
+
+  .sidebar__search,
+  .sidebar__label,
+  .sidebar__label-row,
+  .sidebar__meta,
+  .sidebar__new-group-btn {
+    display: none !important;
+  }
+
+  .sidebar__item {
+    justify-content: center;
+    padding: var(--space-sm) var(--space-xs);
+  }
+
+  .sidebar__avatar {
+    width: 38px;
+    height: 38px;
+    min-width: 38px;
+    font-size: 0.75rem;
+  }
+}

@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:fitsSystemWindows="true"
+    android:background="@color/bg"
+    tools:context=".MainActivity">
+
+    <!-- Top Bar -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/topbar_height"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:background="@color/surface"
+        android:paddingStart="@dimen/space_lg"
+        android:paddingEnd="@dimen/space_lg">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="◈ Talkify"
+            android:textColor="@color/accent"
+            android:textSize="@dimen/text_title"
+            android:textStyle="bold" />
+
+        <ImageButton
+            android:id="@+id/settingsButton"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_marginEnd="@dimen/space_sm"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_settings"
+            android:contentDescription="Settings"
+            app:tint="@color/text_secondary" />
+
+        <TextView
+            android:id="@+id/avatarText"
+            android:layout_width="@dimen/avatar_size_small"
+            android:layout_height="@dimen/avatar_size_small"
+            android:background="@drawable/bg_avatar"
+            android:gravity="center"
+            android:text="Y"
+            android:textColor="@color/text_primary"
+            android:textStyle="bold"
+            android:textSize="14sp" />
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/divider" />
+
+    <!-- Search -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:background="@color/surface"
+        android:padding="@dimen/space_md">
+
+        <EditText
+            android:id="@+id/searchInput"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:background="@drawable/bg_input"
+            android:hint="@string/search_hint"
+            android:textColorHint="@color/text_secondary"
+            android:textColor="@color/text_primary"
+            android:textSize="14sp"
+            android:paddingStart="@dimen/space_md"
+            android:paddingEnd="@dimen/space_md"
+            android:singleLine="true"
+            android:importantForAutofill="no"
+            android:inputType="text" />
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/divider" />
+
+    <!-- Contact & Group List -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/contactsRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@color/bg"
+        android:clipToPadding="false"
+        android:paddingTop="@dimen/space_sm"
+        android:paddingBottom="@dimen/space_sm" />
+
+    <!-- New Group FAB area -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:background="@color/surface"
+        android:padding="@dimen/space_md">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/newGroupButton"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:text="@string/create_group"
+            android:textColor="@color/text_on_accent"
+            android:backgroundTint="@color/accent"
+            android:textAllCaps="false"
+            android:textSize="14sp"
+            style="@style/Widget.Material3.Button" />
+
+    </LinearLayout>
+
+</LinearLayout>

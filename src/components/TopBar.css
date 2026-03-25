@@ -1,0 +1,109 @@
+/* ---- Top Bar ---- */
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 60px;
+  padding: 0 var(--space-lg);
+  background: var(--bg-sidebar);
+  box-shadow: 0 1px 0 var(--divider);
+  z-index: 10;
+  position: relative;
+}
+
+.topbar__right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.topbar__settings-btn {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  color: var(--text-secondary);
+  transition: all var(--transition);
+}
+
+.topbar__settings-btn:hover {
+  background: var(--surface);
+  color: var(--accent);
+  transform: rotate(45deg);
+}
+
+.topbar__brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.topbar__logo {
+  color: var(--text-primary);
+  font-size: 1.35rem;
+  font-weight: 700;
+}
+
+.topbar__title {
+  font-size: var(--fs-title);
+  font-weight: var(--fw-bold);
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+}
+
+.topbar__user {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: 6px 12px;
+  border-radius: var(--radius-pill);
+  transition: background var(--transition);
+  cursor: pointer;
+}
+
+.topbar__user:hover {
+  background: var(--surface);
+}
+
+.topbar__avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--surface);
+  color: var(--text-primary);
+  border: 1px solid var(--divider);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: var(--fw-semi);
+  font-size: 0.8rem;
+}
+
+.topbar__info {
+  display: flex;
+  flex-direction: column;
+}
+
+.topbar__name {
+  font-size: var(--fs-body);
+  font-weight: var(--fw-semi);
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+
+.topbar__status {
+  font-size: var(--fs-meta);
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.topbar__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent-soft);
+}

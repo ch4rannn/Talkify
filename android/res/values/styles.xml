@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Talkify — Android styles / theme -->
+<resources>
+
+    <style name="Theme.Talkify" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/accent</item>
+        <item name="colorPrimaryVariant">@color/accent_muted</item>
+        <item name="colorOnPrimary">@color/text_on_accent</item>
+        <item name="android:colorBackground">@color/bg</item>
+        <item name="colorSurface">@color/surface</item>
+        <item name="colorOnSurface">@color/text_primary</item>
+        <item name="android:statusBarColor">@color/surface</item>
+        <item name="android:navigationBarColor">@color/surface</item>
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
+
+    <!-- Top Bar -->
+    <style name="Talkify.TopBar">
+        <item name="android:background">@color/surface</item>
+        <item name="android:paddingStart">@dimen/space_lg</item>
+        <item name="android:paddingEnd">@dimen/space_lg</item>
+        <item name="android:elevation">0dp</item>
+    </style>
+
+    <style name="Talkify.TopBar.Title">
+        <item name="android:textColor">@color/accent</item>
+        <item name="android:textSize">@dimen/text_title</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">-0.02</item>
+    </style>
+
+    <!-- Message Bubbles -->
+    <style name="Talkify.Bubble.Sent">
+        <item name="android:background">@color/bubble_sent_bg</item>
+        <item name="android:textColor">@color/bubble_sent_text</item>
+        <item name="android:textSize">@dimen/text_body</item>
+        <item name="android:padding">@dimen/space_md</item>
+    </style>
+
+    <style name="Talkify.Bubble.Received">
+        <item name="android:background">@color/bubble_received_bg</item>
+        <item name="android:textColor">@color/bubble_received_text</item>
+        <item name="android:textSize">@dimen/text_body</item>
+        <item name="android:padding">@dimen/space_md</item>
+    </style>
+
+    <style name="Talkify.Timestamp">
+        <item name="android:textColor">@color/text_secondary</item>
+        <item name="android:textSize">@dimen/text_meta</item>
+    </style>
+
+    <!-- Input Field -->
+    <style name="Talkify.InputField">
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:textColorHint">@color/text_secondary</item>
+        <item name="android:textSize">@dimen/text_body</item>
+        <item name="android:hint">Type a message…</item>
+        <item name="android:maxLines">3</item>
+        <item name="android:inputType">textMultiLine</item>
+    </style>
+
+</resources>

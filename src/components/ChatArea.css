@@ -1,0 +1,56 @@
+/* ---- Chat Area ---- */
+.chat-area {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--space-lg) 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+}
+
+.chat-area--no-chat {
+  justify-content: center;
+  align-items: center;
+}
+
+.chat-area__empty {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+  color: var(--text-muted);
+  user-select: none;
+}
+
+.chat-area__empty-icon {
+  font-size: 2.5rem;
+  color: var(--accent);
+  opacity: 0.3;
+  margin-bottom: var(--space-sm);
+}
+
+.chat-area__empty-sub {
+  font-size: var(--fs-meta);
+  color: var(--text-muted);
+}
+
+/* ---- Date Divider ---- */
+.chat-area__date-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-md) var(--space-lg);
+}
+
+.chat-area__date-pill {
+  background: var(--surface);
+  color: var(--text-muted);
+  font-size: 0.70rem;
+  font-weight: var(--fw-semi);
+  letter-spacing: 0.04em;
+  padding: 4px 14px;
+  border-radius: var(--radius-pill);
+  user-select: none;
+}

@@ -1,0 +1,182 @@
+/* ---- New Group Modal ---- */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  backdrop-filter: blur(4px);
+  animation: fadeIn 180ms ease;
+}
+
+.modal {
+  background: var(--bg-sidebar);
+  border: 1px solid var(--divider);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+  width: 380px;
+  max-width: 90vw;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  animation: slideUp 250ms ease;
+  box-shadow: var(--shadow-md);
+}
+
+.modal__title {
+  font-size: var(--fs-title);
+  font-weight: var(--fw-bold);
+  color: var(--text-primary);
+  margin: 0 0 var(--space-md);
+}
+
+.modal__input {
+  width: 100%;
+  padding: var(--space-sm) var(--space-md);
+  background: var(--surface);
+  border: 1px solid var(--divider);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  font-size: var(--fs-body);
+  margin-bottom: var(--space-md);
+  transition: border-color var(--transition);
+}
+
+.modal__input:focus {
+  border-color: var(--accent-soft);
+}
+
+.modal__input::placeholder {
+  color: var(--text-muted);
+}
+
+.modal__subtitle {
+  font-size: var(--fs-meta);
+  font-weight: var(--fw-semi);
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: var(--space-sm);
+}
+
+.modal__contacts {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 var(--space-md);
+  overflow-y: auto;
+  max-height: 240px;
+}
+
+.modal__contact {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background var(--transition);
+  margin-bottom: 2px;
+}
+
+.modal__contact:hover {
+  background: var(--surface-hover);
+}
+
+.modal__contact--selected {
+  background: var(--accent-dim);
+}
+
+.modal__contact-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--surface);
+  color: var(--accent-soft);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  font-weight: var(--fw-semi);
+  flex-shrink: 0;
+}
+
+.modal__contact-name {
+  flex: 1;
+  font-size: var(--fs-body);
+  color: var(--text-primary);
+}
+
+.modal__check {
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent);
+  font-weight: var(--fw-bold);
+  font-size: 0.85rem;
+}
+
+.modal__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-sm);
+}
+
+.modal__btn {
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-sm);
+  font-size: var(--fs-body);
+  font-weight: var(--fw-medium);
+  cursor: pointer;
+  transition: background var(--transition), opacity var(--transition);
+}
+
+.modal__btn--cancel {
+  background: transparent;
+  color: var(--text-secondary);
+}
+
+.modal__btn--cancel:hover {
+  background: var(--surface-hover);
+}
+
+.modal__btn--create {
+  background: var(--surface);
+  color: var(--text-primary);
+  border: 1px solid var(--divider);
+}
+
+.modal__btn--create:hover:not(:disabled) {
+  background: var(--surface-hover);
+  border-color: var(--accent-soft);
+}
+
+.modal__btn--create:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

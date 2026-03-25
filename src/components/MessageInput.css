@@ -1,0 +1,83 @@
+/* ---- Message Input ---- */
+.input-bar {
+  padding: var(--space-md) var(--space-lg);
+  background: var(--bg);
+  flex-shrink: 0;
+  position: relative;
+}
+
+.input-bar::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--divider);
+}
+
+.input-bar__wrapper {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  background: var(--surface);
+  border-radius: var(--radius-pill);
+  padding: var(--space-xs) var(--space-xs) var(--space-xs) var(--space-lg);
+  border: 1px solid transparent;
+  transition: all var(--transition);
+}
+
+.input-bar__wrapper:focus-within {
+  border-color: var(--accent-soft);
+}
+
+.input-bar__field {
+  flex: 1;
+  font-size: var(--fs-body);
+  color: var(--text-primary);
+  height: 44px;
+}
+
+.input-bar__field::placeholder {
+  color: var(--text-muted);
+}
+
+.input-bar__send {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--surface);
+  color: var(--text-primary);
+  border: 1px solid var(--divider);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 250ms cubic-bezier(0.175, 0.885, 0.32, 1.2);
+}
+
+.input-bar__send svg {
+  transition: transform var(--transition);
+}
+
+.input-bar__send:hover:not(:disabled) {
+  background: var(--surface-hover);
+  border-color: var(--accent-soft);
+  transform: scale(1.08);
+}
+
+.input-bar__send:hover:not(:disabled) svg {
+  transform: translate(1px, -1px);
+}
+
+.input-bar__send:active:not(:disabled) {
+  transform: scale(0.95);
+}
+
+.input-bar__send:disabled {
+  opacity: 0.3;
+  background: transparent;
+  border-color: transparent;
+  color: var(--text-muted);
+  cursor: default;
+}
