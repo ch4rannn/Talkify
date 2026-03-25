@@ -9,7 +9,7 @@ const STORAGE_KEY = 'talkify_settings';
 
 const defaultSettings = {
   // Profile
-  username: 'You',
+  username: localStorage.getItem('talkify_username') || 'You',
   statusMessage: '',
   // Appearance
   theme: 'dark',        // 'dark' | 'light'

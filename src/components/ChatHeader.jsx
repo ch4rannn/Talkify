@@ -1,9 +1,11 @@
 import { useChatStore } from '../data/chatStore';
+import { useSettings } from '../data/settingsStore';
 import { API_BASE } from '../config';
 import './ChatHeader.css';
 
 export default function ChatHeader({ onStartCall }) {
-  const { getActiveChat } = useChatStore();
+  const { getActiveChat, setGroupNickname } = useChatStore();
+  const { settings } = useSettings();
   const chat = getActiveChat();
 
   if (!chat) return null;
@@ -50,8 +52,12 @@ export default function ChatHeader({ onStartCall }) {
             <div
               key={m.id}
               className="chat-header__member-avatar"
-              title={m.name}
-              style={{ background: m.avatarColor || 'var(--surface)' }}
+              title={`${m.name}${info.nicknames?.[m.id] ? ` (${info.nicknames[m.id]})` : ''}`}
+              onClick={() => {
+                const nick = prompt(`Set nickname for ${m.name}:`, info.nicknames?.[m.id] || '');
+                if (nick !== null) setGroupNickname(info.id, m.id, nick);
+              }}
+              style={{ background: m.avatarColor || 'var(--surface)', cursor: 'pointer' }}
             >
               {m.initials}
             </div>

@@ -14,6 +14,7 @@ function buildInitialState() {
     searchQuery: '',
     myId: null,      // Retrieved from server
     myName: null,
+    pendingRequestsCount: 0,
   };
 }
 
@@ -22,6 +23,15 @@ function chatReducer(state, action) {
   switch (action.type) {
     case 'SET_ME':
       return { ...state, myId: action.myId, myName: action.myName };
+
+    case 'UPDATE_MY_PROFILE': {
+      const { username, avatarUrl } = action;
+      return { 
+        ...state, 
+        myName: username || state.myName,
+        // settingsStore handles avatarUrl for UI, but we track myName here
+      };
+    }
 
     case 'SELECT_CHAT': {
       const updated = { ...state, activeChatId: action.chatId };
@@ -115,8 +125,35 @@ function chatReducer(state, action) {
       return { ...state, incomingCall: action.payload };
     }
 
+    case 'SET_PENDING_COUNT': {
+      return { ...state, pendingRequestsCount: action.count };
+    }
+
     case 'CLEAR_INCOMING_CALL': {
       return { ...state, incomingCall: null };
+    }
+
+    case 'SET_GROUP_NICKNAME': {
+      const { groupId, userId, nickname } = action;
+      const chat = state.chats[groupId];
+      if (!chat || !chat.info.isGroup) return state;
+
+      return {
+        ...state,
+        chats: {
+          ...state.chats,
+          [groupId]: {
+            ...chat,
+            info: {
+              ...chat.info,
+              nicknames: {
+                ...(chat.info.nicknames || {}),
+                [userId]: nickname,
+              }
+            }
+          }
+        }
+      };
     }
 
     case 'SYNC_PRESENCE': {
@@ -208,8 +245,9 @@ function chatReducer(state, action) {
           id,
           name,
           isGroup: true,
-          members: memberIds,
-          memberDetails: [], // Skipping offline mapping
+          members: [state.myId, ...memberIds],
+          memberDetails: [], 
+          nicknames: {},
           initials,
         },
         messages: [],
@@ -249,6 +287,28 @@ export function ChatProvider({ children }) {
   // Initialize native local network WebSocket, injecting JWT for auth
   const { send, onMessage, connected } = useWebSocket(baseUrlWS, token);
 
+  const fetchPendingCount = useCallback(async () => {
+    if (!token) return;
+    try {
+      const res = await fetch(`${baseUrlHTTP}/api/contacts/pending`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        dispatch({ type: 'SET_PENDING_COUNT', count: data.length });
+      }
+    } catch (e) { console.error(e); }
+  }, [token, baseUrlHTTP]);
+
+  // Periodic check for friend requests 
+  useEffect(() => {
+    if (connected) {
+      fetchPendingCount();
+      const interval = setInterval(fetchPendingCount, 30000); // 30s poll
+      return () => clearInterval(interval);
+    }
+  }, [connected, fetchPendingCount]);
+
   // Handle incoming presence & messaging frames
   useEffect(() => {
     const unsubscribe = onMessage((msg) => {
@@ -284,6 +344,13 @@ export function ChatProvider({ children }) {
       }
       else if (msg.type === 'CALL_CANCELLED') {
         dispatch({ type: 'CLEAR_INCOMING_CALL' });
+      }
+      else if (msg.type === 'CALL_ENDED') {
+        // This will be useful for App.jsx to react
+        dispatch({ type: 'CLEAR_INCOMING_CALL' });
+        if (window._handleCallEndedExternally) {
+          window._handleCallEndedExternally();
+        }
       }
     });
 
@@ -362,6 +429,15 @@ export function ChatProvider({ children }) {
     [send]
   );
 
+  const endCall = useCallback(
+    (targetUserId) => {
+      send('END_CALL', {
+        payload: { targetUserId }
+      });
+    },
+    [send]
+  );
+
   const clearIncomingCall = useCallback(
     () => dispatch({ type: 'CLEAR_INCOMING_CALL' }),
     []
@@ -384,7 +460,15 @@ export function ChatProvider({ children }) {
     emitTyping,
     startCall,
     cancelCall,
+    endCall,
     clearIncomingCall,
+    fetchPendingCount,
+    updateMyProfile: (username, avatarUrl) => {
+      if (username) localStorage.setItem('talkify_username', username);
+      if (avatarUrl) localStorage.setItem('talkify_avatar', avatarUrl);
+      dispatch({ type: 'UPDATE_MY_PROFILE', username, avatarUrl });
+    },
+    setGroupNickname: (groupId, userId, nickname) => dispatch({ type: 'SET_GROUP_NICKNAME', groupId, userId, nickname }),
     createGroup,
     setSearch,
     getActiveChat: () => state.chats[state.activeChatId] || null,

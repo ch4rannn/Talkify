@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { useChatStore } from '../data/chatStore';
 import { useSettings } from '../data/settingsStore';
+import { useSettings } from '../data/settingsStore';
 import MessageBubble from './MessageBubble';
 import './ChatArea.css';
 
@@ -96,6 +97,7 @@ export default function ChatArea() {
             senderId={item.msg.senderId}
             isGroup={isGroup}
             grouped={item.grouped}
+            nicknames={chat.info.nicknames || {}}
           />
         );
       })}

@@ -1,10 +1,11 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useChatStore } from '../data/chatStore';
 import './AddPeoplePanel.css';
 import { API_BASE } from '../config';
 
 const BASE = API_BASE;
 
 export default function AddPeoplePanel({ isOpen, onClose }) {
+  const { fetchPendingCount } = useChatStore();
   const [query, setQuery] = useState('');
   const [results, setResults] = useState([]);
   const [pending, setPending] = useState([]);
@@ -17,9 +18,12 @@ export default function AddPeoplePanel({ isOpen, onClose }) {
   const loadPending = useCallback(async () => {
     try {
       const res = await fetch(`${BASE}/api/contacts/pending`, { headers });
-      if (res.ok) setPending(await res.json());
+      if (res.ok) {
+        const data = await res.json();
+        setPending(data);
+      }
     } catch (e) { console.error(e); }
-  }, [token]);
+  }, [headers]);
 
   useEffect(() => {
     if (isOpen) { loadPending(); setQuery(''); setResults([]); }
@@ -53,7 +57,8 @@ export default function AddPeoplePanel({ isOpen, onClose }) {
       await fetch(`${BASE}/api/contacts/accept`, {
         method: 'POST', headers, body: JSON.stringify({ userId })
       });
-      loadPending(); // refresh
+      loadPending(); // refresh local
+      fetchPendingCount(); // refresh global badge
     } catch (e) { console.error(e); }
   };
 
@@ -64,6 +69,7 @@ export default function AddPeoplePanel({ isOpen, onClose }) {
         method: 'POST', headers, body: JSON.stringify({ userId })
       });
       loadPending();
+      fetchPendingCount(); // refresh global badge
     } catch (e) { console.error(e); }
   };
 

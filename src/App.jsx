@@ -13,7 +13,17 @@ import { SettingsProvider, useSettings } from './data/settingsStore';
 import './App.css';
 
 function ChatApp() {
-  const { chats, activeChatId, getActiveChat, startCall, cancelCall, clearIncomingCall, incomingCall, myName } = useChatStore();
+  const { 
+    chats, 
+    activeChatId, 
+    getActiveChat, 
+    startCall, 
+    cancelCall, 
+    endCall, 
+    clearIncomingCall, 
+    incomingCall, 
+    myName 
+  } = useChatStore();
   const activeChat = getActiveChat();
   const { settings } = useSettings();
   const [activeCall, setActiveCall] = useState(null);
@@ -38,6 +48,24 @@ function ChatApp() {
       cancelCall(incomingCall.fromUserId);
       clearIncomingCall();
     }
+  };
+
+  // Listen for external call end (from WebSocket)
+  React.useEffect(() => {
+    window._handleCallEndedExternally = () => {
+      setActiveCall(null);
+    };
+    return () => {
+      window._handleCallEndedExternally = null;
+    };
+  }, []);
+
+  const handleEndCall = () => {
+    // If we have an active call and an active chat person, notify them
+    if (activeCall && activeChatId) {
+      endCall(activeChatId);
+    }
+    setActiveCall(null);
   };
 
   return (
@@ -76,7 +104,7 @@ function ChatApp() {
         <CallOverlay
           roomID={activeCall.roomID}
           callType={activeCall.type}
-          onEndCall={() => setActiveCall(null)}
+          onEndCall={handleEndCall}
           username={myName || settings?.username}
         />
       )}

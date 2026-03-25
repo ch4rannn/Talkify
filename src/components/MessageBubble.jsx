@@ -2,10 +2,12 @@ import './MessageBubble.css';
 import { useSettings } from '../data/settingsStore';
 import { API_BASE } from '../config';
 
-export default function MessageBubble({ text, mediaUrl, status, timestamp, isSent, senderId, isGroup, grouped }) {
+export default function MessageBubble({ text, mediaUrl, status, timestamp, isSent, senderId, isGroup, grouped, nicknames }) {
   const { settings } = useSettings();
   const senderName =
-    isGroup && !isSent && senderId && !grouped ? senderId.substring(0, 8) : null;
+    isGroup && !isSent && senderId && !grouped 
+      ? (nicknames?.[senderId] || senderId.substring(0, 8)) 
+      : null;
 
   const rowClass = [
     'bubble-row',

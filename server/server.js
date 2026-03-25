@@ -440,6 +440,15 @@ wss.on('connection', async (ws, req) => {
           }));
         }
       }
+      else if (message.type === 'END_CALL') {
+        const { targetUserId } = message.payload;
+        if (connectedUsers.has(targetUserId)) {
+          connectedUsers.get(targetUserId).session.send(JSON.stringify({
+            type: 'CALL_ENDED',
+            payload: { fromUserId: currentUserId }
+          }));
+        }
+      }
     } catch (e) {
       console.error("Message parse error", e);
     }

@@ -5,7 +5,7 @@ import './SettingsPanel.css';
 
 export default function SettingsPanel() {
   const { settings, set, toggle, closeSettings } = useSettings();
-  const { clearAllHistory, myName } = useChatStore();
+  const { clearAllHistory, myName, updateMyProfile, fetchPendingCount } = useChatStore();
 
   if (!settings.settingsOpen) return null;
 
@@ -41,16 +41,40 @@ export default function SettingsPanel() {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`
           },
-          body: JSON.stringify({ username: myName || settings.username, avatarUrl: url })
+          body: JSON.stringify({ username: settings.username || myName, avatarUrl: url })
         });
         
         localStorage.setItem('talkify_avatar', url);
         set('avatarUrl', url);
+        updateMyProfile(settings.username || myName, url);
         alert("Avatar updated successfully!");
       }
     } catch (err) {
       console.error(err);
       alert("Failed to upload avatar");
+    }
+  };
+
+  const handleProfileSave = async () => {
+    const token = localStorage.getItem('talkify_token');
+    try {
+      const res = await fetch(`${API_BASE}/api/settings/profile`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ 
+          username: settings.username, 
+          avatarUrl: settings.avatarUrl || localStorage.getItem('talkify_avatar') 
+        })
+      });
+      if (res.ok) {
+        updateMyProfile(settings.username, settings.avatarUrl || localStorage.getItem('talkify_avatar'));
+        alert("Profile updated!");
+      }
+    } catch (e) {
+      alert("Failed to update profile");
     }
   };
 
@@ -98,14 +122,22 @@ export default function SettingsPanel() {
 
             <label className="settings-field">
               <span className="settings-field__label">Display Name</span>
-              <input
-                className="settings-field__input"
-                type="text"
-                value={myName || ''}
-                readOnly
-                placeholder="Your connected name"
-                style={{ opacity: 0.7, cursor: 'not-allowed' }}
-              />
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <input
+                  className="settings-field__input"
+                  type="text"
+                  value={settings.username || ''}
+                  onChange={(e) => set('username', e.target.value)}
+                  placeholder="Your display name"
+                />
+                <button 
+                  className="settings-danger-btn" 
+                  style={{ background: 'var(--primary)', padding: '0 12px', fontSize: '0.8rem', color: '#fff' }}
+                  onClick={handleProfileSave}
+                >
+                  Save
+                </button>
+              </div>
             </label>
 
             <label className="settings-field">

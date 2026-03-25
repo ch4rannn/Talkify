@@ -6,7 +6,7 @@ import NewGroupModal from './NewGroupModal';
 import AddPeoplePanel from './AddPeoplePanel';
 
 export default function Sidebar() {
-  const { chats, activeChatId, selectChat, searchQuery, setSearch } = useChatStore();
+  const { chats, activeChatId, selectChat, searchQuery, setSearch, pendingRequestsCount } = useChatStore();
   const [showNewGroup, setShowNewGroup] = useState(false);
   const [showAddPeople, setShowAddPeople] = useState(false);
 
@@ -178,6 +178,9 @@ export default function Sidebar() {
               onClick={() => setShowAddPeople(true)}
             >
               + Add
+              {pendingRequestsCount > 0 && (
+                <span className="sidebar__add-badge">{pendingRequestsCount}</span>
+              )}
             </button>
             <a 
                href="/app-debug.apk" 
