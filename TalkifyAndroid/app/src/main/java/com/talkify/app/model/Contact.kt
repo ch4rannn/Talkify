@@ -8,7 +8,8 @@ data class Contact(
     var isOnline: Boolean = false,
     val lastSeen: String = "",
     var avatarUrl: String? = null,
-    val personalities: List<String> = emptyList()
+    val personalities: List<String> = emptyList(),
+    val nicknames: Map<String, String> = emptyMap()
 ) {
     val initials: String
         get() {

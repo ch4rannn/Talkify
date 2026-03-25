@@ -23,7 +23,7 @@ class NewGroupActivity : AppCompatActivity() {
         binding.membersRecyclerView.layoutManager = LinearLayoutManager(this)
         binding.membersRecyclerView.adapter = adapter
 
-        adapter.submitList(ChatManager.contacts)
+        adapter.submitList(ChatManager.getRawContacts())
 
         binding.createGroupButton.setOnClickListener {
             val name = binding.groupNameInput.text.toString().trim()

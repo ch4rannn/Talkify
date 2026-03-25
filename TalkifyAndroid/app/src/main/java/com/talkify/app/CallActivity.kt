@@ -2,14 +2,22 @@ package com.talkify.app
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import com.talkify.app.model.ChatManager
+import com.talkify.app.network.WebSocketClient
 import com.zegocloud.uikit.prebuilt.call.ZegoUIKitPrebuiltCallConfig
 import com.zegocloud.uikit.prebuilt.call.ZegoUIKitPrebuiltCallFragment
 
 class CallActivity : AppCompatActivity() {
 
+    private val callEndListener = {
+        finish()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_call)
+        
+        ChatManager.addCallListener(callEndListener)
 
         // ZegoCloud Credentials
         val appID: Long = 1208204400
@@ -36,5 +44,14 @@ class CallActivity : AppCompatActivity() {
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, fragment)
             .commitNow()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        ChatManager.removeCallListener(callEndListener)
+        val targetUserId = intent.getStringExtra("targetUserId")
+        if (targetUserId != null) {
+            WebSocketClient.sendEndCall(targetUserId)
+        }
     }
 }

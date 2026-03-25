@@ -21,6 +21,7 @@ object ChatManager {
     
     // Callbacks
     private val listeners = mutableListOf<() -> Unit>()
+    private val callListeners = mutableListOf<() -> Unit>()
 
     fun syncPresence(users: List<WsPresenceUser>) {
         users.forEach { u ->
@@ -85,6 +86,10 @@ object ChatManager {
         }.sortedWith(compareByDescending<ChatItem> { it.contact.isOnline }.thenBy { it.contact.name })
     }
 
+    fun getRawContacts(): List<Contact> {
+        return dynamicContacts.values.filter { !it.isGroup }.sortedBy { it.name }
+    }
+
     fun getGroupList(): List<ChatItem> {
         return mutableGroups.map { g ->
             ChatItem(g, messages[g.id]?.lastOrNull(), unreadCounts[g.id] ?: 0)
@@ -132,6 +137,20 @@ object ChatManager {
 
     fun removeListener(listener: () -> Unit) {
         listeners.remove(listener)
+    }
+
+    fun addCallListener(listener: () -> Unit) {
+        if (!callListeners.contains(listener)) callListeners.add(listener)
+    }
+
+    fun removeCallListener(listener: () -> Unit) {
+        callListeners.remove(listener)
+    }
+
+    fun handleCallEnded() {
+        Handler(Looper.getMainLooper()).post {
+            callListeners.forEach { it.invoke() }
+        }
     }
 
     private fun notifyListeners() {

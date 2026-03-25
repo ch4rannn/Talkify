@@ -14,7 +14,7 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-class MessageAdapter(private val isGroupChat: Boolean) :
+class MessageAdapter(private val chatId: String?, private val isGroupChat: Boolean) :
     ListAdapter<Message, RecyclerView.ViewHolder>(DiffCallback) {
 
     private val df = SimpleDateFormat("hh:mm a", Locale.getDefault())
@@ -61,7 +61,9 @@ class MessageAdapter(private val isGroupChat: Boolean) :
             
             if (isGroupChat && message.senderId != null) {
                 binding.senderName.visibility = View.VISIBLE
-                binding.senderName.text = ChatManager.getContactById(message.senderId)?.name ?: "Unknown"
+                val group = chatId?.let { ChatManager.getContactById(it) }
+                val nickname = group?.nicknames?.get(message.senderId)
+                binding.senderName.text = nickname ?: ChatManager.getContactById(message.senderId)?.name ?: "Unknown"
             } else {
                 binding.senderName.visibility = View.GONE
             }

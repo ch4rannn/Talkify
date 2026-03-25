@@ -13,6 +13,7 @@ data class WsPrivatePayload(val id: String? = null, val senderId: String, val re
 data class WsStatusPayload(val messageId: String, val status: String, val chatId: String)
 data class WsTypingPayload(val senderId: String, val isTyping: Boolean)
 data class WsSeenPayload(val seenBy: String)
+data class WsCallPayload(val targetUserId: String)
 
 object WebSocketClient {
     private val client = OkHttpClient.Builder()
@@ -68,6 +69,9 @@ object WebSocketClient {
                             val payload = gson.fromJson(payloadStr, WsTypingPayload::class.java)
                             ChatManager.setTyping(payload.senderId, payload.isTyping)
                         }
+                        "CALL_ENDED" -> {
+                            ChatManager.handleCallEnded()
+                        }
                     }
                 } catch (e: Exception) {
                     Log.e("WebSocket", "Parse error", e)
@@ -101,6 +105,12 @@ object WebSocketClient {
     fun sendTyping(receiverId: String, isTyping: Boolean) {
         val payload = mapOf("receiverId" to receiverId, "isTyping" to isTyping)
         val msg = mapOf("type" to "TYPING", "payload" to payload)
+        webSocket?.send(gson.toJson(msg))
+    }
+
+    fun sendEndCall(targetUserId: String) {
+        val payload = mapOf("targetUserId" to targetUserId)
+        val msg = mapOf("type" to "END_CALL", "payload" to payload)
         webSocket?.send(gson.toJson(msg))
     }
 

@@ -5,14 +5,14 @@
     android:orientation="vertical"
     android:gravity="center"
     android:padding="32dp"
-    android:background="@color/bg_color">
+    android:background="@color/bg">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="◈"
         android:textSize="48sp"
-        android:textColor="@color/primary_color"
+        android:textColor="@color/accent"
         android:layout_marginBottom="16dp" />
 
     <TextView
@@ -63,7 +63,7 @@
         android:layout_height="50dp"
         android:text="Sign In"
         android:textAllCaps="false"
-        android:backgroundTint="@color/primary_color"
+        android:backgroundTint="@color/accent"
         android:textColor="#FFFFFF"
         android:layout_marginBottom="16dp" />
 
@@ -72,7 +72,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Don't have an account? Sign up"
-        android:textColor="@color/primary_color"
+        android:textColor="@color/accent"
         android:padding="8dp"
         android:textStyle="bold" />
 

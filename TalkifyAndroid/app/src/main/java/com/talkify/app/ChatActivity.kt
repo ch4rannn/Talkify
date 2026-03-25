@@ -49,7 +49,7 @@ class ChatActivity : AppCompatActivity() {
         }
 
         // Setup List
-        adapter = MessageAdapter(contact.isGroup)
+        adapter = MessageAdapter(chatId, contact.isGroup)
         val layoutManager = LinearLayoutManager(this).apply { stackFromEnd = true }
         binding.messagesRecyclerView.layoutManager = layoutManager
         binding.messagesRecyclerView.adapter = adapter
@@ -97,6 +97,7 @@ class ChatActivity : AppCompatActivity() {
         val intent = android.content.Intent(this, CallActivity::class.java).apply {
             putExtra("roomID", "talkify_room_$contactId")
             putExtra("isVideoCall", isVideoCall)
+            putExtra("targetUserId", contactId)
             putExtra("userID", "Android_${System.currentTimeMillis() % 10000}")
             putExtra("userName", "Phone User")
         }

@@ -96,6 +96,7 @@ class AuthActivity : AppCompatActivity() {
                             val data: Map<String, Any> = gson.fromJson(respBody, type)
 
                             val token = data["token"] as String
+                            @Suppress("UNCHECKED_CAST")
                             val userObj = data["user"] as Map<String, String>
                             
                             val id = userObj["id"] ?: ""

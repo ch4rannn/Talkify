@@ -8,10 +8,18 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.talkify.app.adapter.ContactAdapter
 import com.talkify.app.databinding.ActivityMainBinding
 import com.talkify.app.model.ChatManager
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import org.json.JSONArray
+import org.json.JSONObject
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var adapter: ContactAdapter
+    private val client = OkHttpClient()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,6 +50,13 @@ class MainActivity : AppCompatActivity() {
         
         if (token != null) {
             com.talkify.app.network.WebSocketClient.connect(token)
+            fetchFriendRequestCount(token)
+        }
+
+        binding.requestsButton.setOnClickListener {
+            // Ideally maps to a FriendRequestsActivity, just Toast or start an activity
+            val intent = Intent(this, MainActivity::class.java) // To be replaced in the future
+            // startActivity(intent)
         }
 
         ChatManager.addListener(::updateList)
@@ -58,6 +73,44 @@ class MainActivity : AppCompatActivity() {
             // Combine both groups and contacts, sort by latest message timestamp
             val allChats = ChatManager.getContactList() + ChatManager.getGroupList()
             adapter.submitList(allChats.sortedByDescending { it.lastMessage?.timestamp ?: 0L })
+        }
+    }
+
+    private fun fetchFriendRequestCount(token: String) {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val request = Request.Builder()
+                    .url(AppConfig.HTTP_BASE + "/api/users/friend-requests")
+                    .addHeader("Authorization", "Bearer $token")
+                    .get()
+                    .build()
+
+                client.newCall(request).execute().use { response ->
+                    if (response.isSuccessful) {
+                        val responseData = response.body?.string()
+                        if (responseData != null) {
+                            val array = JSONArray(responseData)
+                            var pendingCount = 0
+                            for (i in 0 until array.length()) {
+                                val req = array.getJSONObject(i)
+                                if (req.getString("status") == "pending") {
+                                    pendingCount++
+                                }
+                            }
+                            runOnUiThread {
+                                if (pendingCount > 0) {
+                                    binding.requestsBadge.text = pendingCount.toString()
+                                    binding.requestsBadge.visibility = android.view.View.VISIBLE
+                                } else {
+                                    binding.requestsBadge.visibility = android.view.View.GONE
+                                }
+                            }
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
     }
 }
