@@ -23,9 +23,10 @@ if (fs.existsSync(distDir)) {
   app.use(express.static(distDir));
 }
 
-// Setup Multer for media uploads
-const uploadDir = path.join(__dirname, 'uploads');
-if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir);
+// Setup Multer for media uploads (configurable for persistent volumes like Fly.io)
+const dataDir = process.env.DATA_DIR || __dirname;
+const uploadDir = path.join(dataDir, 'uploads');
+if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
 app.use('/uploads', express.static(uploadDir));
 
 const storage = multer.diskStorage({

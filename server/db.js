@@ -2,9 +2,14 @@ const sqlite3 = require('sqlite3').verbose();
 const { open } = require('sqlite');
 const path = require('path');
 
+const fs = require('fs');
+
 async function getDb() {
+  const dataDir = process.env.DATA_DIR || __dirname;
+  if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
+
   const db = await open({
-    filename: path.join(__dirname, 'talkify.db'),
+    filename: path.join(dataDir, 'talkify.db'),
     driver: sqlite3.Database
   });
 
