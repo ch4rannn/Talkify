@@ -2,6 +2,9 @@
   "name": "talkify-server",
   "version": "1.0.0",
   "description": "Talkify real-time chat backend",
+  "engines": {
+    "node": "18.x"
+  },
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
