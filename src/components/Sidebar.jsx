@@ -179,7 +179,7 @@ export default function Sidebar() {
           </div>
 
           {/* Download App Button */}
-          <div className="sidebar__download-app">
+          <div className="sidebar__download-app sidebar__android-link">
             <a 
                href="/app-debug.apk" 
                download 

@@ -2,6 +2,7 @@ import { useState, useRef } from 'react';
 import { useChatStore } from '../data/chatStore';
 import { useSettings } from '../data/settingsStore';
 import { API_BASE } from '../config';
+import EmojiGifPicker from './EmojiGifPicker';
 import './MessageInput.css';
 
 export default function MessageInput() {
@@ -9,9 +10,11 @@ export default function MessageInput() {
   const { activeChatId, sendMessage, emitTyping } = useChatStore();
   const { settings } = useSettings();
   const typingTimeoutRef = useRef(null);
-  const [uploadProgress, setUploadProgress] = useState(null); // null | 0-100
+  const [uploadProgress, setUploadProgress] = useState(null);
   const [uploadError, setUploadError] = useState(null);
   const lastFileRef = useRef(null);
+  const [showPicker, setShowPicker] = useState(false);
+  const inputRef = useRef(null);
 
   const handleSend = () => {
     const trimmed = value.trim();
@@ -88,6 +91,22 @@ export default function MessageInput() {
     }
   };
 
+  // Emoji/GIF/Sticker handlers
+  const handleSelectEmoji = (emoji) => {
+    setValue(prev => prev + emoji);
+    inputRef.current?.focus();
+  };
+
+  const handleSelectGif = (gifUrl) => {
+    sendMessage(activeChatId, null, gifUrl);
+    setShowPicker(false);
+  };
+
+  const handleSelectSticker = (sticker) => {
+    sendMessage(activeChatId, sticker);
+    setShowPicker(false);
+  };
+
   return (
     <footer className="input-bar" id="message-input" style={{ position: 'relative' }}>
       {/* Upload Progress Bar */}
@@ -116,16 +135,13 @@ export default function MessageInput() {
 
       {/* Upload Error Banner */}
       {uploadError && (
-        <div
-          onClick={handleRetry}
-          style={{
-            position: 'absolute', top: '-40px', left: 0, right: 0,
-            padding: '8px 16px', background: '#fef2f2',
-            borderTop: '1px solid #fecaca', cursor: 'pointer',
-            display: 'flex', alignItems: 'center', gap: '8px',
-            color: '#dc2626', fontSize: '0.8rem', fontWeight: 500
-          }}
-        >
+        <div onClick={handleRetry} style={{
+          position: 'absolute', top: '-40px', left: 0, right: 0,
+          padding: '8px 16px', background: '#fef2f2',
+          borderTop: '1px solid #fecaca', cursor: 'pointer',
+          display: 'flex', alignItems: 'center', gap: '8px',
+          color: '#dc2626', fontSize: '0.8rem', fontWeight: 500
+        }}>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#dc2626" strokeWidth="2">
             <circle cx="12" cy="12" r="10" /><line x1="15" y1="9" x2="9" y2="15" /><line x1="9" y1="9" x2="15" y2="15" />
           </svg>
@@ -133,14 +149,41 @@ export default function MessageInput() {
         </div>
       )}
 
+      {/* Emoji/GIF/Sticker Picker */}
+      {showPicker && (
+        <EmojiGifPicker
+          onSelectEmoji={handleSelectEmoji}
+          onSelectGif={handleSelectGif}
+          onSelectSticker={handleSelectSticker}
+          onClose={() => setShowPicker(false)}
+        />
+      )}
+
       <div className="input-bar__wrapper">
-        <label style={{ cursor: uploadProgress !== null ? 'wait' : 'pointer', padding: '12px', display: 'flex', alignItems: 'center', color: 'var(--text-secondary)' }}>
+        {/* Emoji Toggle */}
+        <button
+          onClick={() => setShowPicker(prev => !prev)}
+          style={{
+            padding: '12px 8px', display: 'flex', alignItems: 'center',
+            background: 'none', border: 'none', cursor: 'pointer',
+            fontSize: '1.3rem', color: showPicker ? '#0ea5e9' : 'var(--text-secondary)',
+            transition: 'color 0.15s'
+          }}
+          title="Emoji, GIF & Stickers"
+        >
+          😊
+        </button>
+
+        {/* Image Upload */}
+        <label style={{ cursor: uploadProgress !== null ? 'wait' : 'pointer', padding: '12px 4px', display: 'flex', alignItems: 'center', color: 'var(--text-secondary)' }}>
           <input type="file" accept="image/*" style={{ display: 'none' }} onChange={handleImageSend} disabled={uploadProgress !== null} />
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline>
           </svg>
         </label>
+
         <input
+          ref={inputRef}
           className="input-bar__field"
           type="text"
           placeholder="Type a message…"
