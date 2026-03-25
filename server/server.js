@@ -438,7 +438,7 @@ wss.on('connection', async (ws, req) => {
 
 // SPA catch-all: serve React app for any non-API route in production
 if (fs.existsSync(distDir)) {
-  app.get('*', (req, res) => {
+  app.get(/(.*)/, (req, res) => {
     res.sendFile(path.join(distDir, 'index.html'));
   });
 }
