@@ -72,17 +72,19 @@
 .sidebar__new-group-btn {
   font-size: 0.75rem;
   font-weight: var(--fw-semi);
-  color: var(--text-primary);
-  background: var(--surface);
-  border: 1px solid var(--divider);
-  padding: 3px 10px;
+  color: #fff;
+  background: #0ea5e9;
+  border: none;
+  padding: 5px 14px;
   border-radius: var(--radius-pill);
   transition: all var(--transition);
+  box-shadow: 0 2px 8px rgba(14, 165, 233, 0.3);
 }
 
 .sidebar__new-group-btn:hover {
-  background: var(--surface-hover);
-  border-color: var(--accent-soft);
+  background: #0284c7;
+  box-shadow: 0 3px 12px rgba(14, 165, 233, 0.4);
+  transform: translateY(-1px);
 }
 
 .sidebar__list {

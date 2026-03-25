@@ -5,7 +5,7 @@ import './SettingsPanel.css';
 
 export default function SettingsPanel() {
   const { settings, set, toggle, closeSettings } = useSettings();
-  const { clearAllHistory } = useChatStore();
+  const { clearAllHistory, myName } = useChatStore();
 
   if (!settings.settingsOpen) return null;
 
@@ -41,7 +41,7 @@ export default function SettingsPanel() {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`
           },
-          body: JSON.stringify({ username: settings.username, avatarUrl: url })
+          body: JSON.stringify({ username: myName || settings.username, avatarUrl: url })
         });
         
         localStorage.setItem('talkify_avatar', url);
@@ -101,10 +101,10 @@ export default function SettingsPanel() {
               <input
                 className="settings-field__input"
                 type="text"
-                value={settings.username || ''}
-                onChange={(e) => set('username', e.target.value)}
-                placeholder="Your name"
-                maxLength={30}
+                value={myName || ''}
+                readOnly
+                placeholder="Your connected name"
+                style={{ opacity: 0.7, cursor: 'not-allowed' }}
               />
             </label>
 

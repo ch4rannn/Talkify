@@ -111,6 +111,14 @@ function chatReducer(state, action) {
       };
     }
 
+    case 'SET_INCOMING_CALL': {
+      return { ...state, incomingCall: action.payload };
+    }
+
+    case 'CLEAR_INCOMING_CALL': {
+      return { ...state, incomingCall: null };
+    }
+
     case 'SYNC_PRESENCE': {
       // action.users is array of { userId, username, isOnline, lastSeen, avatarUrl }
       const newChats = { ...state.chats };
@@ -270,6 +278,13 @@ export function ChatProvider({ children }) {
         const { senderId, isTyping } = msg.payload;
         dispatch({ type: 'SET_TYPING', chatId: senderId, isTyping });
       }
+      // 8) Incoming Call Notification
+      else if (msg.type === 'INCOMING_CALL') {
+        dispatch({ type: 'SET_INCOMING_CALL', payload: msg.payload });
+      }
+      else if (msg.type === 'CALL_CANCELLED') {
+        dispatch({ type: 'CLEAR_INCOMING_CALL' });
+      }
     });
 
     return unsubscribe;
@@ -329,6 +344,29 @@ export function ChatProvider({ children }) {
     [send]
   );
 
+  const startCall = useCallback(
+    (targetUserId, callType, roomID) => {
+      send('START_CALL', {
+        payload: { targetUserId, callType, roomID }
+      });
+    },
+    [send]
+  );
+
+  const cancelCall = useCallback(
+    (targetUserId) => {
+      send('CANCEL_CALL', {
+        payload: { targetUserId }
+      });
+    },
+    [send]
+  );
+
+  const clearIncomingCall = useCallback(
+    () => dispatch({ type: 'CLEAR_INCOMING_CALL' }),
+    []
+  );
+
   const createGroup = useCallback(
     (name, memberIds) => dispatch({ type: 'CREATE_GROUP', name, memberIds }),
     [],
@@ -344,6 +382,9 @@ export function ChatProvider({ children }) {
     selectChat,
     sendMessage,
     emitTyping,
+    startCall,
+    cancelCall,
+    clearIncomingCall,
     createGroup,
     setSearch,
     getActiveChat: () => state.chats[state.activeChatId] || null,

@@ -421,6 +421,25 @@ wss.on('connection', async (ws, req) => {
           }));
         }
       }
+      else if (message.type === 'START_CALL') {
+        const { targetUserId, callType, roomID } = message.payload;
+        if (connectedUsers.has(targetUserId)) {
+          const senderInfo = connectedUsers.get(currentUserId);
+          connectedUsers.get(targetUserId).session.send(JSON.stringify({
+            type: 'INCOMING_CALL',
+            payload: { fromUserId: currentUserId, fromName: senderInfo.username, callType, roomID }
+          }));
+        }
+      }
+      else if (message.type === 'CANCEL_CALL') {
+        const { targetUserId } = message.payload;
+        if (connectedUsers.has(targetUserId)) {
+          connectedUsers.get(targetUserId).session.send(JSON.stringify({
+            type: 'CALL_CANCELLED',
+            payload: { fromUserId: currentUserId }
+          }));
+        }
+      }
     } catch (e) {
       console.error("Message parse error", e);
     }

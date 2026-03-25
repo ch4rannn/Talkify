@@ -6,17 +6,39 @@ import ChatArea from './components/ChatArea';
 import MessageInput from './components/MessageInput';
 import SettingsPanel from './components/SettingsPanel';
 import CallOverlay from './components/CallOverlay';
+import IncomingCallModal from './components/IncomingCallModal';
 import AuthScreen from './components/AuthScreen';
 import { ChatProvider, useChatStore } from './data/chatStore';
 import { SettingsProvider, useSettings } from './data/settingsStore';
 import './App.css';
 
 function ChatApp() {
-  const { chats, activeChatId, receiveMessage, getActiveChat } = useChatStore();
+  const { chats, activeChatId, getActiveChat, startCall, cancelCall, clearIncomingCall, incomingCall, myName } = useChatStore();
   const activeChat = getActiveChat();
   const { settings } = useSettings();
   const [activeCall, setActiveCall] = useState(null);
 
+  const handleStartCall = (roomID, type) => {
+    // Notify the other user via WebSocket
+    if (activeChat && activeChat.info && !activeChat.info.isGroup) {
+      startCall(activeChat.info.id, type, roomID);
+    }
+    setActiveCall({ roomID, type });
+  };
+
+  const handleAcceptIncoming = () => {
+    if (incomingCall) {
+      setActiveCall({ roomID: incomingCall.roomID, type: incomingCall.callType });
+      clearIncomingCall();
+    }
+  };
+
+  const handleDeclineIncoming = () => {
+    if (incomingCall) {
+      cancelCall(incomingCall.fromUserId);
+      clearIncomingCall();
+    }
+  };
 
   return (
     <div className="app" id="app-root">
@@ -26,7 +48,7 @@ function ChatApp() {
         <div className="app__chat-panel">
           {activeChat ? (
             <>
-              <ChatHeader onStartCall={(roomID, type) => setActiveCall({ roomID, type })} />
+              <ChatHeader onStartCall={handleStartCall} />
               <ChatArea />
               <MessageInput />
             </>
@@ -40,12 +62,22 @@ function ChatApp() {
       </div>
       <SettingsPanel />
 
+      {/* Incoming Call Notification */}
+      {incomingCall && !activeCall && (
+        <IncomingCallModal
+          callerName={incomingCall.fromName}
+          callType={incomingCall.callType}
+          onAccept={handleAcceptIncoming}
+          onDecline={handleDeclineIncoming}
+        />
+      )}
+
       {activeCall && (
         <CallOverlay
           roomID={activeCall.roomID}
           callType={activeCall.type}
           onEndCall={() => setActiveCall(null)}
-          username={settings?.username}
+          username={myName || settings?.username}
         />
       )}
     </div>
