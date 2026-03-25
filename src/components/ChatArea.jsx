@@ -1,7 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useChatStore } from '../data/chatStore';
 import { useSettings } from '../data/settingsStore';
-import { useSettings } from '../data/settingsStore';
 import MessageBubble from './MessageBubble';
 import './ChatArea.css';
 
