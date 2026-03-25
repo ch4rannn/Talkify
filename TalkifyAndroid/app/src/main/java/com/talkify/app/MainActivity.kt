@@ -1,5 +1,6 @@
 package com.talkify.app
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
@@ -33,6 +34,14 @@ class MainActivity : AppCompatActivity() {
 
         binding.settingsButton.setOnClickListener {
             startActivity(Intent(this, SettingsActivity::class.java))
+        }
+
+        // Read JWT from SharedPreferences (stored by AuthActivity)
+        val prefs = getSharedPreferences("talkify_prefs", Context.MODE_PRIVATE)
+        val token = prefs.getString("talkify_token", null)
+        
+        if (token != null) {
+            com.talkify.app.network.WebSocketClient.connect(token)
         }
 
         ChatManager.addListener(::updateList)

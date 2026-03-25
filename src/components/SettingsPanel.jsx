@@ -1,5 +1,6 @@
 import { useSettings } from '../data/settingsStore';
 import { useChatStore } from '../data/chatStore';
+import { API_BASE } from '../config';
 import './SettingsPanel.css';
 
 export default function SettingsPanel() {
@@ -12,6 +13,44 @@ export default function SettingsPanel() {
     if (confirm('Clear all chat history? This cannot be undone.')) {
       if (typeof clearAllHistory === 'function') clearAllHistory();
       closeSettings();
+    }
+  };
+
+  const handleAvatarUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    
+    const formData = new FormData();
+    formData.append('media', file);
+    
+    try {
+      const token = localStorage.getItem('talkify_token');
+      const res = await fetch(`${API_BASE}/api/upload`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}` }, // Usually good practice
+        body: formData
+      });
+      
+      if (res.ok) {
+        const { url } = await res.json();
+        
+        // Update profile link in SQLite
+        await fetch(`${API_BASE}/api/settings/profile`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ username: settings.username, avatarUrl: url })
+        });
+        
+        localStorage.setItem('talkify_avatar', url);
+        set('avatarUrl', url);
+        alert("Avatar updated successfully!");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Failed to upload avatar");
     }
   };
 
@@ -36,12 +75,33 @@ export default function SettingsPanel() {
           <section className="settings-card">
             <h3 className="settings-card__title">Profile</h3>
 
+            <div className="settings-field" style={{ alignItems: 'center', flexDirection: 'row', gap: '16px', marginBottom: '16px' }}>
+              <div 
+                className="settings-avatar-preview" 
+                style={{
+                  width: '64px', height: '64px', borderRadius: '50%', 
+                  backgroundColor: 'var(--surface-hover)',
+                  backgroundImage: settings.avatarUrl || localStorage.getItem('talkify_avatar') 
+                    ? `url(${API_BASE}${settings.avatarUrl || localStorage.getItem('talkify_avatar')})` 
+                    : 'none',
+                  backgroundSize: 'cover', backgroundPosition: 'center', flexShrink: 0
+                }}
+              />
+              <div style={{ flex: 1 }}>
+                <span className="settings-field__label" style={{ display: 'block', marginBottom: '8px' }}>Profile Picture</span>
+                <label className="settings-danger-btn" style={{ display: 'inline-block', padding: '6px 12px', fontSize: '0.8rem', cursor: 'pointer', background: 'var(--border)', color: 'var(--text)' }}>
+                  Upload Image
+                  <input type="file" accept="image/*" style={{ display: 'none' }} onChange={handleAvatarUpload} />
+                </label>
+              </div>
+            </div>
+
             <label className="settings-field">
               <span className="settings-field__label">Display Name</span>
               <input
                 className="settings-field__input"
                 type="text"
-                value={settings.username}
+                value={settings.username || ''}
                 onChange={(e) => set('username', e.target.value)}
                 placeholder="Your name"
                 maxLength={30}
@@ -53,7 +113,7 @@ export default function SettingsPanel() {
               <input
                 className="settings-field__input"
                 type="text"
-                value={settings.statusMessage}
+                value={settings.statusMessage || ''}
                 onChange={(e) => set('statusMessage', e.target.value)}
                 placeholder="What's on your mind?"
                 maxLength={60}

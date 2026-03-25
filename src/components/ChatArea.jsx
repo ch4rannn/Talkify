@@ -89,6 +89,8 @@ export default function ChatArea() {
           <MessageBubble
             key={item.key}
             text={item.msg.text}
+            mediaUrl={item.msg.mediaUrl}
+            status={item.msg.status}
             timestamp={item.msg.timestamp}
             isSent={item.msg.isSent}
             senderId={item.msg.senderId}

@@ -1,12 +1,16 @@
 import { useState } from 'react';
-import { contacts } from '../data/chatData';
 import { useChatStore } from '../data/chatStore';
 import './NewGroupModal.css';
 
 export default function NewGroupModal({ onClose }) {
-  const { createGroup } = useChatStore();
+  const { createGroup, chats } = useChatStore();
   const [groupName, setGroupName] = useState('');
   const [selected, setSelected] = useState(new Set());
+
+  // Derive available contacts from live WebSocket presence
+  const onlineUsers = Object.values(chats)
+    .filter(c => !c.info.isGroup && c.info.online)
+    .map(c => c.info);
 
   const toggle = (id) => {
     setSelected((prev) => {
@@ -43,10 +47,13 @@ export default function NewGroupModal({ onClose }) {
           autoFocus
         />
 
-        <p className="modal__subtitle">Add Members</p>
+        <p className="modal__subtitle">Add Members (Online Users)</p>
 
         <ul className="modal__contacts">
-          {contacts.map((c) => (
+          {onlineUsers.length === 0 && (
+            <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem' }}>No active users right now...</p>
+          )}
+          {onlineUsers.map((c) => (
             <li
               key={c.id}
               className={`modal__contact ${selected.has(c.id) ? 'modal__contact--selected' : ''}`}

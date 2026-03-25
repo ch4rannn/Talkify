@@ -1,4 +1,5 @@
 import { useChatStore } from '../data/chatStore';
+import { API_BASE } from '../config';
 import './ChatHeader.css';
 
 export default function ChatHeader({ onStartCall }) {
@@ -14,9 +15,17 @@ export default function ChatHeader({ onStartCall }) {
       <div className="chat-header__left">
         <div
           className={`chat-header__avatar ${info.isGroup ? 'chat-header__avatar--group' : ''}`}
-          style={{ background: info.avatarColor || 'var(--surface)' }}
+          style={{ 
+            backgroundColor: info.avatarColor || 'var(--surface)',
+            backgroundImage: info.avatarUrl 
+              ? `url(${API_BASE}${info.avatarUrl})`
+              : 'none',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            color: info.avatarUrl ? 'transparent' : 'inherit'
+          }}
         >
-          {info.initials}
+          {!info.avatarUrl && info.initials}
           {!info.isGroup && info.online && (
             <span className="chat-header__dot" />
           )}
@@ -24,11 +33,13 @@ export default function ChatHeader({ onStartCall }) {
         <div className="chat-header__info">
           <h2 className="chat-header__name">{info.name}</h2>
           <span className="chat-header__status">
-            {info.isGroup
-              ? `${info.members.length} members`
-              : info.online
-                ? 'Online'
-                : info.lastSeen || 'Offline'}
+            {chat.isTyping
+              ? <span style={{ color: 'var(--primary)', fontStyle: 'italic', fontSize: '0.85rem' }}>typing...</span>
+              : info.isGroup
+                ? `${info.members.length} members`
+                : info.online
+                  ? 'Online'
+                  : info.lastSeen ? `Last seen ${info.lastSeen}` : 'Offline'}
           </span>
         </div>
       </div>

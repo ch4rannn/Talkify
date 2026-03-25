@@ -1,0 +1,212 @@
+/* ── Add People Panel ─────────────────────────────────── */
+
+.add-people-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.15s ease;
+}
+
+.add-people-panel {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  width: 420px;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.4);
+}
+
+.add-people__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--border);
+}
+
+.add-people__title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.add-people__close {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 6px;
+  transition: background 0.15s;
+}
+.add-people__close:hover {
+  background: var(--surface-hover);
+}
+
+/* Search */
+.add-people__search {
+  padding: 16px 24px;
+}
+.add-people__search input {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--text);
+  font-size: 0.9rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.add-people__search input:focus {
+  border-color: var(--primary);
+}
+.add-people__search input::placeholder {
+  color: var(--text-secondary);
+}
+
+/* Sections */
+.add-people__section {
+  padding: 0 24px 16px;
+  overflow-y: auto;
+}
+.add-people__section-title {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-secondary);
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.add-people__count {
+  background: var(--primary);
+  color: #fff;
+  font-size: 0.65rem;
+  padding: 2px 7px;
+  border-radius: 10px;
+  font-weight: 700;
+}
+
+.add-people__empty {
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  text-align: center;
+  padding: 12px 0;
+}
+
+/* List */
+.add-people__list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.add-people__item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  transition: background 0.15s;
+}
+.add-people__item:hover {
+  background: var(--surface-hover);
+}
+
+.add-people__avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--surface-hover);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  flex-shrink: 0;
+}
+
+.add-people__name {
+  flex: 1;
+  font-size: 0.9rem;
+  color: var(--text);
+  font-weight: 500;
+}
+
+.add-people__add-btn {
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+.add-people__add-btn:hover {
+  opacity: 0.85;
+}
+
+.add-people__badge {
+  font-size: 0.75rem;
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-weight: 500;
+}
+.add-people__badge--accepted {
+  background: rgba(34, 197, 94, 0.15);
+  color: #22c55e;
+}
+.add-people__badge--pending {
+  background: rgba(234, 179, 8, 0.15);
+  color: #eab308;
+}
+
+/* Accept / Decline */
+.add-people__actions {
+  display: flex;
+  gap: 6px;
+}
+
+.add-people__accept-btn {
+  background: #22c55e;
+  color: #fff;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+.add-people__accept-btn:hover {
+  opacity: 0.85;
+}
+
+.add-people__decline-btn {
+  background: var(--surface-hover);
+  color: var(--text-secondary);
+  border: none;
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.add-people__decline-btn:hover {
+  background: rgba(239, 68, 68, 0.2);
+  color: #ef4444;
+}

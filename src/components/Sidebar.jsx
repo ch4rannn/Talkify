@@ -1,14 +1,23 @@
-import { useState } from 'react';
-import { useChatStore } from '../data/chatStore';
-import NewGroupModal from './NewGroupModal';
+import React, { useState } from 'react';
 import './Sidebar.css';
+import { useChatStore } from '../data/chatStore';
+import { API_BASE } from '../config';
+import NewGroupModal from './NewGroupModal';
+import AddPeoplePanel from './AddPeoplePanel';
 
 export default function Sidebar() {
   const { chats, activeChatId, selectChat, searchQuery, setSearch } = useChatStore();
   const [showNewGroup, setShowNewGroup] = useState(false);
+  const [showAddPeople, setShowAddPeople] = useState(false);
 
   const chatList = Object.values(chats);
-  const directChats = chatList.filter((c) => !c.info.isGroup);
+  const directChats = chatList.filter((c) => !c.info.isGroup)
+    .sort((a, b) => {
+      // Online first, then by name
+      if (a.info.online && !b.info.online) return -1;
+      if (!a.info.online && b.info.online) return 1;
+      return a.info.name.localeCompare(b.info.name);
+    });
   const groupChats = chatList.filter((c) => c.info.isGroup);
 
   const q = searchQuery.toLowerCase();
@@ -65,6 +74,13 @@ export default function Sidebar() {
           <div className="sidebar__section">
             <div className="sidebar__label-row">
               <h2 className="sidebar__label">Direct Messages</h2>
+              <button 
+                className="sidebar__new-group-btn" 
+                onClick={() => setShowAddPeople(true)}
+                aria-label="Add Friends"
+              >
+                + Add
+              </button>
             </div>
             <ul className="sidebar__list">
               {filteredDirect.map((chat) => (
@@ -75,12 +91,21 @@ export default function Sidebar() {
                   role="button"
                   tabIndex={0}
                   onKeyDown={(e) => e.key === 'Enter' && selectChat(chat.info.id)}
+                  style={{ opacity: chat.info.online ? 1 : 0.55 }}
                 >
                   <div
                     className="sidebar__avatar"
-                    style={{ background: chat.info.avatarColor || 'var(--surface)' }}
+                    style={{ 
+                      backgroundColor: chat.info.avatarColor || 'var(--surface)',
+                      backgroundImage: chat.info.avatarUrl 
+                        ? `url(${API_BASE}${chat.info.avatarUrl})`
+                        : 'none',
+                      backgroundSize: 'cover',
+                      backgroundPosition: 'center',
+                      color: chat.info.avatarUrl ? 'transparent' : 'inherit'
+                    }}
                   >
-                    {chat.info.initials}
+                    {!chat.info.avatarUrl && chat.info.initials}
                     {chat.info.online && <span className="sidebar__online-dot" />}
                   </div>
                   <div className="sidebar__info">
@@ -89,7 +114,11 @@ export default function Sidebar() {
                       <span className="sidebar__time">{getLastTime(chat)}</span>
                     </div>
                     <div className="sidebar__meta">
-                      <span className="sidebar__preview">{getLastMessage(chat)}</span>
+                      <span className="sidebar__preview">
+                        {getLastMessage(chat) !== 'No messages yet' 
+                          ? getLastMessage(chat) 
+                          : chat.info.online ? 'Online' : 'Offline'}
+                      </span>
                       {chat.unread > 0 && (
                         <span className="sidebar__badge">{chat.unread}</span>
                       )}
@@ -170,6 +199,13 @@ export default function Sidebar() {
 
       {showNewGroup && (
         <NewGroupModal onClose={() => setShowNewGroup(false)} />
+      )}
+
+      {showAddPeople && (
+        <AddPeoplePanel
+          isOpen={showAddPeople}
+          onClose={() => setShowAddPeople(false)}
+        />
       )}
     </>
   );

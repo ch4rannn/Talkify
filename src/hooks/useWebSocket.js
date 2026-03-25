@@ -1,79 +1,64 @@
 import { useEffect, useRef, useCallback, useState } from 'react';
 
-/**
- * useWebSocket — lightweight WebSocket wrapper.
- *
- * When no server is reachable, it falls back to a local echo-reply
- * mode so the UI is fully demoable without a backend.
- */
-export default function useWebSocket(url) {
+export default function useWebSocket(baseUrl, token) {
   const wsRef = useRef(null);
   const [connected, setConnected] = useState(false);
-  const [fallback, setFallback] = useState(false);
   const listenersRef = useRef([]);
 
-  // ---- Simulated reply pool ---- //
-  const replies = [
-    "Got it! 👍",
-    "That's interesting, tell me more.",
-    "Sure thing!",
-    "I totally agree with you.",
-    "Haha, nice one 😄",
-    "Let me think about that for a moment…",
-    "Sounds good to me!",
-    "Can you elaborate on that?",
-    "Absolutely, no problem.",
-    "Great point!",
-    "I was just thinking the same thing.",
-    "Thanks for sharing that!",
-    "Let's do it! 🚀",
-  ];
-
   useEffect(() => {
-    if (!url) {
-      setFallback(true);
-      return;
-    }
+    if (!token) return;
 
-    try {
-      const ws = new WebSocket(url);
+    let ws;
+    let reconnectTimer;
+    const url = `${baseUrl}?token=${token}`;
+
+    const connect = () => {
+      ws = new WebSocket(url);
       wsRef.current = ws;
 
-      ws.onopen = () => setConnected(true);
+      ws.onopen = () => {
+        setConnected(true);
+        console.log('[WebSocket] Connected securely');
+      };
+      
       ws.onclose = () => {
         setConnected(false);
-        setFallback(true);
+        console.log('[WebSocket] Disconnected - retrying...');
+        reconnectTimer = setTimeout(connect, 3000);
       };
-      ws.onerror = () => {
-        setFallback(true);
+
+      ws.onerror = (err) => {
+        console.error('[WebSocket] Error:', err);
       };
+
       ws.onmessage = (event) => {
-        listenersRef.current.forEach((fn) => fn(event.data));
+        try {
+          const parsed = JSON.parse(event.data);
+          listenersRef.current.forEach((fn) => fn(parsed));
+        } catch (e) {
+          console.error('[WebSocket] Failed to parse message', e);
+        }
       };
+    };
 
-      return () => ws.close();
-    } catch {
-      setFallback(true);
+    connect();
+
+    return () => {
+      clearTimeout(reconnectTimer);
+      if (ws) {
+        ws.onclose = null; // Prevent reconnect on unmount
+        ws.close();
+      }
+    };
+  }, [baseUrl, token]);
+
+  const send = useCallback((type, data) => {
+    if (connected && wsRef.current?.readyState === WebSocket.OPEN) {
+      wsRef.current.send(JSON.stringify({ type, ...data }));
+    } else {
+      console.warn('[WebSocket] Cannot send, not connected');
     }
-  }, [url]);
-
-  const send = useCallback(
-    (data) => {
-      if (connected && wsRef.current?.readyState === WebSocket.OPEN) {
-        wsRef.current.send(data);
-      }
-
-      // Fallback: simulate an echo reply after a short delay
-      if (fallback) {
-        const delay = 600 + Math.random() * 1200;
-        const reply = replies[Math.floor(Math.random() * replies.length)];
-        setTimeout(() => {
-          listenersRef.current.forEach((fn) => fn(reply));
-        }, delay);
-      }
-    },
-    [connected, fallback],
-  );
+  }, [connected]);
 
   const onMessage = useCallback((fn) => {
     listenersRef.current.push(fn);
@@ -82,5 +67,5 @@ export default function useWebSocket(url) {
     };
   }, []);
 
-  return { send, onMessage, connected, fallback };
+  return { send, onMessage, connected };
 }

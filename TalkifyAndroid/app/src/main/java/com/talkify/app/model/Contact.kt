@@ -2,11 +2,12 @@ package com.talkify.app.model
 
 data class Contact(
     val id: String,
-    val name: String,
+    var name: String,
     val isGroup: Boolean = false,
     val members: List<String> = emptyList(),
-    val isOnline: Boolean = false,
+    var isOnline: Boolean = false,
     val lastSeen: String = "",
+    var avatarUrl: String? = null,
     val personalities: List<String> = emptyList()
 ) {
     val initials: String

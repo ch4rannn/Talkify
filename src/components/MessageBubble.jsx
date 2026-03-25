@@ -1,11 +1,11 @@
 import './MessageBubble.css';
-import { getContact } from '../data/chatData';
 import { useSettings } from '../data/settingsStore';
+import { API_BASE } from '../config';
 
-export default function MessageBubble({ text, timestamp, isSent, senderId, isGroup, grouped }) {
+export default function MessageBubble({ text, mediaUrl, status, timestamp, isSent, senderId, isGroup, grouped }) {
   const { settings } = useSettings();
   const senderName =
-    isGroup && !isSent && senderId && !grouped ? getContact(senderId)?.name : null;
+    isGroup && !isSent && senderId && !grouped ? senderId.substring(0, 8) : null;
 
   const rowClass = [
     'bubble-row',
@@ -19,11 +19,28 @@ export default function MessageBubble({ text, timestamp, isSent, senderId, isGro
         {senderName && (
           <span className="bubble__sender">{senderName}</span>
         )}
-        <p className="bubble__text">{text}</p>
+        
+        {mediaUrl && (
+          <img 
+            src={`${API_BASE}${mediaUrl}`} 
+            alt="Attachment" 
+            style={{ maxWidth: '100%', borderRadius: '8px', marginBottom: text ? '8px' : '0' }}
+          />
+        )}
+        
+        {text && <p className="bubble__text">{text}</p>}
+        
         {settings.showTimestamps && (
-          <time className="bubble__time" dateTime={timestamp}>
-            {formatTime(timestamp)}
-          </time>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '4px', justifyContent: 'flex-end', marginTop: text ? '2px' : '0' }}>
+            <time className="bubble__time" dateTime={timestamp}>
+              {formatTime(timestamp)}
+            </time>
+            {isSent && (
+              <span style={{ fontSize: '0.7rem', color: status === 'SEEN' ? '#3b82f6' : 'inherit', opacity: status === 'SEEN' ? 1 : 0.6 }}>
+                {status === 'SENT' ? '✓' : status === 'DELIVERED' || status === 'SEEN' ? '✓✓' : '✓'}
+              </span>
+            )}
+          </div>
         )}
       </div>
     </div>

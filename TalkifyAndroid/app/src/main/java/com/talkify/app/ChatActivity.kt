@@ -1,6 +1,10 @@
 package com.talkify.app
 
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.text.Editable
+import android.text.TextWatcher
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.talkify.app.adapter.MessageAdapter
@@ -11,9 +15,12 @@ class ChatActivity : AppCompatActivity() {
     private lateinit var binding: ActivityChatBinding
     private lateinit var adapter: MessageAdapter
     private var chatId: String? = null
+    private val typingHandler = Handler(Looper.getMainLooper())
+    private var typingRunnable: Runnable? = null
 
     private val chatListener = {
         updateMessages()
+        updateTypingStatus()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -55,8 +62,24 @@ class ChatActivity : AppCompatActivity() {
             if (text.isNotEmpty()) {
                 ChatManager.sendMessage(contact.id, text)
                 binding.messageInput.text.clear()
+                // Stop typing emission
+                chatId?.let { ChatManager.sendTyping(it, false) }
             }
         }
+
+        // Typing indicator emission on text changes
+        binding.messageInput.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                chatId?.let { id ->
+                    ChatManager.sendTyping(id, true)
+                    typingRunnable?.let { typingHandler.removeCallbacks(it) }
+                    typingRunnable = Runnable { ChatManager.sendTyping(id, false) }
+                    typingHandler.postDelayed(typingRunnable!!, 1500)
+                }
+            }
+            override fun afterTextChanged(s: Editable?) {}
+        })
 
         binding.audioCallButton.setOnClickListener {
             startCallActivity(contact.id, false)
@@ -94,6 +117,21 @@ class ChatActivity : AppCompatActivity() {
             adapter.submitList(msgs.toList()) {
                 if (msgs.isNotEmpty()) {
                     binding.messagesRecyclerView.scrollToPosition(msgs.size - 1)
+                }
+            }
+        }
+    }
+
+    private fun updateTypingStatus() {
+        runOnUiThread {
+            chatId?.let { id ->
+                val isTyping = ChatManager.isTyping(id)
+                val contact = ChatManager.getContactById(id)
+                binding.chatStatus.text = when {
+                    isTyping -> "typing..."
+                    contact?.isGroup == true -> "${contact.members.size} members"
+                    contact?.isOnline == true -> "Online"
+                    else -> contact?.lastSeen ?: "Offline"
                 }
             }
         }

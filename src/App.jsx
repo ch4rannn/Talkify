@@ -6,9 +6,9 @@ import ChatArea from './components/ChatArea';
 import MessageInput from './components/MessageInput';
 import SettingsPanel from './components/SettingsPanel';
 import CallOverlay from './components/CallOverlay';
+import AuthScreen from './components/AuthScreen';
 import { ChatProvider, useChatStore } from './data/chatStore';
 import { SettingsProvider, useSettings } from './data/settingsStore';
-import useAutoReply from './hooks/useAutoReply';
 import './App.css';
 
 function ChatApp() {
@@ -17,8 +17,6 @@ function ChatApp() {
   const { settings } = useSettings();
   const [activeCall, setActiveCall] = useState(null);
 
-  // Simulate auto-replies
-  useAutoReply(chats, activeChatId, receiveMessage);
 
   return (
     <div className="app" id="app-root">
@@ -55,6 +53,20 @@ function ChatApp() {
 }
 
 export default function App() {
+  const [token, setToken] = useState(localStorage.getItem('talkify_token') || null);
+
+  const handleLogin = (newToken, user) => {
+    localStorage.setItem('talkify_token', newToken);
+    localStorage.setItem('talkify_userId', user.id);
+    localStorage.setItem('talkify_username', user.username);
+    if(user.avatarUrl) localStorage.setItem('talkify_avatar', user.avatarUrl);
+    setToken(newToken);
+  };
+
+  if (!token) {
+    return <AuthScreen onLogin={handleLogin} />;
+  }
+
   return (
     <SettingsProvider>
       <ChatProvider>

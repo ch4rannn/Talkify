@@ -43,6 +43,14 @@ class MessageAdapter(private val isGroupChat: Boolean) :
         fun bind(message: Message) {
             binding.sentMessageText.text = message.text
             binding.sentTimestamp.text = df.format(Date(message.timestamp))
+            
+            // Read receipt ticks
+            val statusText = when (message.status) {
+                "DELIVERED" -> "✓✓"
+                "SEEN" -> "✓✓"
+                else -> "✓"
+            }
+            binding.sentStatus.text = statusText
         }
     }
 

@@ -49,4 +49,9 @@ dependencies {
     
     // ZegoCloud Call UI Kit
     implementation("com.github.ZEGOCLOUD:zego_uikit_prebuilt_call_android:+")
+    
+    // OkHttp Websockets
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+    // JSON parsing
+    implementation("com.google.code.gson:gson:2.10.1")
 }
