@@ -163,19 +163,25 @@ export default function MessageInput() {
         {/* Emoji Toggle */}
         <button
           onClick={() => setShowPicker(prev => !prev)}
-          style={{
-            padding: '12px 8px', display: 'flex', alignItems: 'center',
-            background: 'none', border: 'none', cursor: 'pointer',
-            fontSize: '1.3rem', color: showPicker ? '#0ea5e9' : 'var(--text-secondary)',
-            transition: 'color 0.15s'
-          }}
           title="Emoji, GIF & Stickers"
+          style={{
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            background: 'none', border: 'none', cursor: 'pointer',
+            fontSize: '1.35rem', color: showPicker ? '#0ea5e9' : 'var(--text-secondary)',
+            transition: 'color 0.15s', width: '40px', height: '40px',
+            flexShrink: 0, padding: 0
+          }}
         >
-          😊
+          <span style={{ transform: 'translateY(-1px)' }}>😊</span>
         </button>
 
         {/* Image Upload */}
-        <label style={{ cursor: uploadProgress !== null ? 'wait' : 'pointer', padding: '12px 4px', display: 'flex', alignItems: 'center', color: 'var(--text-secondary)' }}>
+        <label style={{ 
+          cursor: uploadProgress !== null ? 'wait' : 'pointer', 
+          display: 'flex', alignItems: 'center', justifyContent: 'center', 
+          color: 'var(--text-secondary)', width: '40px', height: '40px',
+          flexShrink: 0, padding: 0, margin: 0
+        }}>
           <input type="file" accept="image/*" style={{ display: 'none' }} onChange={handleImageSend} disabled={uploadProgress !== null} />
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline>

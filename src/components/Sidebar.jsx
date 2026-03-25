@@ -74,13 +74,6 @@ export default function Sidebar() {
           <div className="sidebar__section">
             <div className="sidebar__label-row">
               <h2 className="sidebar__label">Direct Messages</h2>
-              <button 
-                className="sidebar__new-group-btn" 
-                onClick={() => setShowAddPeople(true)}
-                aria-label="Add Friends"
-              >
-                + Add
-              </button>
             </div>
             <ul className="sidebar__list">
               {filteredDirect.map((chat) => (
@@ -178,12 +171,18 @@ export default function Sidebar() {
             </ul>
           </div>
 
-          {/* Download App Button */}
-          <div className="sidebar__download-app sidebar__android-link">
+          {/* Footer Actions */}
+          <div className="sidebar__download-app">
+            <button 
+              className="sidebar__add-footer-btn" 
+              onClick={() => setShowAddPeople(true)}
+            >
+              + Add
+            </button>
             <a 
                href="/app-debug.apk" 
                download 
-               className="sidebar__download-btn"
+               className="sidebar__download-btn sidebar__android-link"
                title="Download Talkify for Android"
             >
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
