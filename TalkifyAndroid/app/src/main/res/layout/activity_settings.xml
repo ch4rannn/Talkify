@@ -156,6 +156,28 @@
 
             </LinearLayout>
 
+            <!-- Account Section -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="ACCOUNT"
+                android:textColor="@color/text_secondary"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.1"
+                android:layout_marginBottom="@dimen/space_sm"
+                android:layout_marginTop="@dimen/space_md"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/logoutButton"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:text="Log Out"
+                app:backgroundTint="#e53935"
+                android:textColor="#FFFFFF"
+                app:cornerRadius="12dp"
+                android:layout_marginTop="8dp" />
+
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

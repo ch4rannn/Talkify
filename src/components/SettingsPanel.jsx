@@ -78,6 +78,13 @@ export default function SettingsPanel() {
     }
   };
 
+  const handleLogout = () => {
+    if (confirm('Are you sure you want to log out?')) {
+      localStorage.clear();
+      window.location.reload();
+    }
+  };
+
   return (
     <div className="settings-overlay" onClick={closeSettings}>
       <aside className="settings-panel" onClick={(e) => e.stopPropagation()}>
@@ -218,8 +225,11 @@ export default function SettingsPanel() {
           {/* ── Danger Zone ── */}
           <section className="settings-card">
             <h3 className="settings-card__title">Data</h3>
-            <button className="settings-danger-btn" onClick={handleClearHistory}>
+            <button className="settings-danger-btn" onClick={handleClearHistory} style={{ marginBottom: '8px' }}>
               Clear All Chat History
+            </button>
+            <button className="settings-danger-btn" onClick={handleLogout} style={{ background: '#e53935' }}>
+              Log Out
             </button>
           </section>
 

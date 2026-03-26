@@ -41,6 +41,21 @@ class SettingsActivity : AppCompatActivity() {
         switchTimestamps.isChecked = prefs.getBoolean("showTimestamps", true)
         switchEnterToSend.isChecked = prefs.getBoolean("enterToSend", true)
 
+        findViewById<com.google.android.material.button.MaterialButton>(R.id.logoutButton).setOnClickListener {
+            // Clear auth preferences
+            val prefsAuth = getSharedPreferences("talkify_prefs", Context.MODE_PRIVATE)
+            prefsAuth.edit().clear().apply()
+
+            Toast.makeText(this, "Logged out", Toast.LENGTH_SHORT).show()
+
+            // Navigate back to AuthActivity and clear task
+            val intent = android.content.Intent(this, AuthActivity::class.java).apply {
+                flags = android.content.Intent.FLAG_ACTIVITY_NEW_TASK or android.content.Intent.FLAG_ACTIVITY_CLEAR_TASK
+            }
+            startActivity(intent)
+            finish()
+        }
+
         findViewById<ImageButton>(R.id.backButton).setOnClickListener {
             val newName = editUsername.text.toString().trim().takeIf { it.isNotEmpty() } ?: "You"
             val newStatus = editStatus.text.toString().trim()
