@@ -59,12 +59,12 @@ class SettingsActivity : AppCompatActivity() {
             val authPrefs = getSharedPreferences("talkify_prefs", Context.MODE_PRIVATE)
             val token = authPrefs.getString("talkify_token", "") ?: ""
             if (token.isNotEmpty()) {
-                val json = gson.toJson(mapOf("displayName" to newName, "statusMessage" to newStatus))
+                val json = gson.toJson(mapOf("username" to newName, "avatarUrl" to ""))
                 val body = json.toRequestBody(JSON)
                 val request = Request.Builder()
-                    .url(AppConfig.HTTP_BASE + "/api/users/profile")
+                    .url(AppConfig.HTTP_BASE + "/api/settings/profile")
                     .addHeader("Authorization", "Bearer $token")
-                    .put(body)
+                    .post(body)
                     .build()
                     
                 client.newCall(request).enqueue(object : Callback {

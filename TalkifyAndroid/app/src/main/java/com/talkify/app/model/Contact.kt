@@ -13,11 +13,10 @@ data class Contact(
 ) {
     val initials: String
         get() {
-            if (isGroup && name.isNotBlank()) {
-                val words = name.split(" ").filter { it.isNotBlank() }
-                return words.take(2).joinToString("") { it.first().uppercase() }
-            }
-            return name.split(" ").take(2).joinToString("") { it.first().uppercase() }
+            if (name.isBlank()) return "?"
+            val words = name.split(" ").filter { it.isNotBlank() }
+            if (words.isEmpty()) return "?"
+            return words.take(2).joinToString("") { it.first().uppercase() }
         }
 }
 

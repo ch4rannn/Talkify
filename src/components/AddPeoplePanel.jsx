@@ -13,18 +13,18 @@ export default function AddPeoplePanel({ isOpen, onClose }) {
   const [searching, setSearching] = useState(false);
   const token = localStorage.getItem('talkify_token');
 
-  const headers = { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' };
-
   // Load pending requests on open
   const loadPending = useCallback(async () => {
     try {
-      const res = await fetch(`${BASE}/api/contacts/pending`, { headers });
+      const res = await fetch(`${BASE}/api/contacts/pending`, { 
+        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }
+      });
       if (res.ok) {
         const data = await res.json();
         setPending(data);
       }
     } catch (e) { console.error(e); }
-  }, [headers]);
+  }, [token]);
 
   useEffect(() => {
     if (isOpen) { loadPending(); setQuery(''); setResults([]); }
@@ -46,7 +46,9 @@ export default function AddPeoplePanel({ isOpen, onClose }) {
 
     const timeout = setTimeout(async () => {
       try {
-        const res = await fetch(`${BASE}/api/contacts/search?q=${encodeURIComponent(q)}`, { headers });
+        const res = await fetch(`${BASE}/api/contacts/search?q=${encodeURIComponent(q)}`, { 
+          headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }
+        });
         if (res.ok) {
           setResults(await res.json());
         } else {
@@ -69,7 +71,9 @@ export default function AddPeoplePanel({ isOpen, onClose }) {
     setErrorMsg(null);
     try {
       const res = await fetch(`${BASE}/api/contacts/request`, {
-        method: 'POST', headers, body: JSON.stringify({ userId })
+        method: 'POST', 
+        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }, 
+        body: JSON.stringify({ userId })
       });
       if (!res.ok) {
         const err = await res.json();
@@ -85,7 +89,9 @@ export default function AddPeoplePanel({ isOpen, onClose }) {
     setErrorMsg(null);
     try {
       const res = await fetch(`${BASE}/api/contacts/accept`, {
-        method: 'POST', headers, body: JSON.stringify({ userId })
+        method: 'POST', 
+        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }, 
+        body: JSON.stringify({ userId })
       });
       if (!res.ok) {
         const err = await res.json();
@@ -102,7 +108,9 @@ export default function AddPeoplePanel({ isOpen, onClose }) {
     setErrorMsg(null);
     try {
       const res = await fetch(`${BASE}/api/contacts/decline`, {
-        method: 'POST', headers, body: JSON.stringify({ userId })
+        method: 'POST', 
+        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }, 
+        body: JSON.stringify({ userId })
       });
       if (!res.ok) {
         const err = await res.json();

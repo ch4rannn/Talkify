@@ -198,7 +198,7 @@ function chatReducer(state, action) {
     }
 
     case 'RECEIVE_API_MESSAGE': {
-      const { senderId, receiverId, content, timestamp } = action.payload;
+      const { id: msgId, senderId, receiverId, content, mediaUrl, status, timestamp } = action.payload;
       
       // Resolve the chat partner
       const chatId = senderId === state.myId ? receiverId : senderId;
@@ -206,12 +206,17 @@ function chatReducer(state, action) {
       const chat = state.chats[chatId];
       if (!chat) return state; // Drop offline ghost messages
 
+      // Dedup: prevent duplicate messages (server echoes back to sender)
+      if (chat.messages.some(m => m.id === msgId)) return state;
+
       const newMsg = {
-        id: timestamp + Math.random(),
+        id: msgId || ('m' + timestamp + Math.random()),
         text: content,
+        mediaUrl: mediaUrl || null,
         isSent: senderId === state.myId,
         senderId,
         timestamp,
+        status: status || 'SENT',
       };
 
       const isActive = state.activeChatId === chatId;
@@ -372,7 +377,7 @@ export function ChatProvider({ children }) {
           
           // Tell the server we have seen all these messages
           if (connected) {
-            send('MARK_SEEN', { senderId: chatId });
+            send('MARK_SEEN', { payload: { senderId: chatId } });
           }
         }
       } catch (err) {

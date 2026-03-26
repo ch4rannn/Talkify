@@ -94,12 +94,15 @@ class ChatActivity : AppCompatActivity() {
     }
 
     private fun startCallActivity(contactId: String, isVideoCall: Boolean) {
+        val prefs = getSharedPreferences("talkify_prefs", android.content.Context.MODE_PRIVATE)
+        val userId = prefs.getString("talkify_userId", "User_${System.currentTimeMillis() % 10000}") ?: "User_${System.currentTimeMillis() % 10000}"
+        val userName = prefs.getString("talkify_username", "You") ?: "You"
         val intent = android.content.Intent(this, CallActivity::class.java).apply {
             putExtra("roomID", "talkify_room_$contactId")
             putExtra("isVideoCall", isVideoCall)
             putExtra("targetUserId", contactId)
-            putExtra("userID", "Android_${System.currentTimeMillis() % 10000}")
-            putExtra("userName", "Phone User")
+            putExtra("userID", userId)
+            putExtra("userName", userName)
         }
         startActivity(intent)
     }

@@ -120,6 +120,8 @@ object ChatManager {
 
     private fun addMessage(chatId: String, message: Message) {
         val list = messages.getOrPut(chatId) { mutableListOf() }
+        // Prevent duplicate messages (server echoes back to sender)
+        if (list.any { it.id == message.id }) return
         list.add(message)
         notifyListeners()
     }

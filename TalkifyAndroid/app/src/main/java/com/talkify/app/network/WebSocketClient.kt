@@ -25,7 +25,18 @@ object WebSocketClient {
     
     private val BASE_URL = AppConfig.WS_BASE
     
+    private var currentToken: String? = null
+    private var reconnectAttempts = 0
+    private val maxReconnectAttempts = 10
+    private val handler = android.os.Handler(android.os.Looper.getMainLooper())
+    
     fun connect(token: String) {
+        currentToken = token
+        reconnectAttempts = 0
+        doConnect(token)
+    }
+    
+    private fun doConnect(token: String) {
         // Inject the JWT into the URL query for server-side handshake validation
         val url = "$BASE_URL/?token=$token"
         val request = Request.Builder().url(url).build()
@@ -33,6 +44,7 @@ object WebSocketClient {
         webSocket = client.newWebSocket(request, object : WebSocketListener() {
             override fun onOpen(webSocket: WebSocket, response: Response) {
                 Log.d("WebSocket", "Connected to server (JWT authenticated)")
+                reconnectAttempts = 0
             }
             
             override fun onMessage(webSocket: WebSocket, text: String) {
@@ -83,9 +95,22 @@ object WebSocketClient {
             }
             
             override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
-                Log.e("WebSocket", "Failure", t)
+                Log.e("WebSocket", "Connection failure", t)
+                scheduleReconnect()
             }
         })
+    }
+    
+    private fun scheduleReconnect() {
+        val token = currentToken ?: return
+        if (reconnectAttempts >= maxReconnectAttempts) {
+            Log.e("WebSocket", "Max reconnect attempts reached")
+            return
+        }
+        val delayMs = (Math.pow(2.0, reconnectAttempts.toDouble()) * 1000).toLong().coerceAtMost(30000)
+        reconnectAttempts++
+        Log.d("WebSocket", "Reconnecting in ${delayMs}ms (attempt $reconnectAttempts)")
+        handler.postDelayed({ doConnect(token) }, delayMs)
     }
     
     fun sendMessage(receiverId: String, text: String?, mediaUrl: String? = null) {

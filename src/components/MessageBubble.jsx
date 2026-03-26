@@ -24,7 +24,7 @@ export default function MessageBubble({ text, mediaUrl, status, timestamp, isSen
         
         {mediaUrl && (
           <img 
-            src={`${API_BASE}${mediaUrl}`} 
+            src={mediaUrl.startsWith('http') ? mediaUrl : `${API_BASE}${mediaUrl}`} 
             alt="Attachment" 
             style={{ maxWidth: '100%', maxHeight: '250px', objectFit: 'contain', borderRadius: '8px', marginBottom: text ? '8px' : '0' }}
           />

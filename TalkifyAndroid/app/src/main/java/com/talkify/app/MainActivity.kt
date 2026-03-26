@@ -81,7 +81,7 @@ class MainActivity : AppCompatActivity() {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val request = Request.Builder()
-                    .url(AppConfig.HTTP_BASE + "/api/users/friend-requests")
+                    .url(AppConfig.HTTP_BASE + "/api/contacts/pending")
                     .addHeader("Authorization", "Bearer $token")
                     .get()
                     .build()
@@ -91,13 +91,7 @@ class MainActivity : AppCompatActivity() {
                         val responseData = response.body?.string()
                         if (responseData != null) {
                             val array = JSONArray(responseData)
-                            var pendingCount = 0
-                            for (i in 0 until array.length()) {
-                                val req = array.getJSONObject(i)
-                                if (req.getString("status") == "pending") {
-                                    pendingCount++
-                                }
-                            }
+                            val pendingCount = array.length()
                             runOnUiThread {
                                 if (pendingCount > 0) {
                                     binding.requestsBadge.text = pendingCount.toString()
