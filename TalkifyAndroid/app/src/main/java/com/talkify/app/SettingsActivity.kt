@@ -24,14 +24,19 @@ class SettingsActivity : AppCompatActivity() {
         setContentView(R.layout.activity_settings)
 
         val prefs = getSharedPreferences("talkify_settings", Context.MODE_PRIVATE)
+        val authPrefs = getSharedPreferences("talkify_prefs", Context.MODE_PRIVATE)
 
         val editUsername = findViewById<EditText>(R.id.editUsername)
         val editStatus = findViewById<EditText>(R.id.editStatus)
         val switchTimestamps = findViewById<MaterialSwitch>(R.id.switchTimestamps)
         val switchEnterToSend = findViewById<MaterialSwitch>(R.id.switchEnterToSend)
 
+        val savedSettingsUser = prefs.getString("username", "")
+        val actualUser = authPrefs.getString("talkify_username", "You")
+        val displayUser = if (!savedSettingsUser.isNullOrEmpty()) savedSettingsUser else actualUser
+
         // Load existing
-        editUsername.setText(prefs.getString("username", "You"))
+        editUsername.setText(displayUser)
         editStatus.setText(prefs.getString("statusMessage", ""))
         switchTimestamps.isChecked = prefs.getBoolean("showTimestamps", true)
         switchEnterToSend.isChecked = prefs.getBoolean("enterToSend", true)

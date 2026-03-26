@@ -53,6 +53,9 @@ class MainActivity : AppCompatActivity() {
             fetchFriendRequestCount(token)
         }
 
+        val username = prefs.getString("talkify_username", "You") ?: "You"
+        binding.avatarText.text = username.take(1).uppercase()
+
         binding.requestsButton.setOnClickListener {
             startActivity(Intent(this, AddFriendActivity::class.java))
         }

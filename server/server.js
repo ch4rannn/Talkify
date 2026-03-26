@@ -286,33 +286,36 @@ const wss = new WebSocket.Server({ server });
 const connectedUsers = new Map();
 
 async function broadcastPresence() {
-  // Send each connected user ONLY their accepted contacts
-  for (const [userId, data] of connectedUsers.entries()) {
-    if (data.session.readyState === WebSocket.OPEN) {
-      await broadcastContactsToUser(userId);
+  try {
+    for (const [userId, data] of connectedUsers.entries()) {
+      if (data.session.readyState === WebSocket.OPEN) {
+        await broadcastContactsToUser(userId);
+      }
     }
-  }
+  } catch (err) { console.error("[WS] broadcastPresence Error:", err); }
 }
 
 async function broadcastContactsToUser(userId) {
-  const contacts = await db.all(`
-    SELECT u.id as userId, u.username, u.avatarUrl, u.isOnline, u.lastSeen FROM users u
-    INNER JOIN contacts c ON 
-      (c.senderId = ? AND c.receiverId = u.id AND c.status = 'ACCEPTED')
-      OR (c.receiverId = ? AND c.senderId = u.id AND c.status = 'ACCEPTED')
-  `, [userId, userId]);
+  try {
+    const contacts = await db.all(`
+      SELECT u.id as userId, u.username, u.avatarUrl, u.isOnline, u.lastSeen FROM users u
+      INNER JOIN contacts c ON 
+        (c.senderId = ? AND c.receiverId = u.id AND c.status = 'ACCEPTED')
+        OR (c.receiverId = ? AND c.senderId = u.id AND c.status = 'ACCEPTED')
+    `, [userId, userId]);
 
-  const presenceMessage = JSON.stringify({
-    type: 'PRESENCE_UPDATE',
-    payload: contacts
-  });
+    const presenceMessage = JSON.stringify({
+      type: 'PRESENCE_UPDATE',
+      payload: contacts
+    });
 
-  if (connectedUsers.has(userId)) {
-    const session = connectedUsers.get(userId).session;
-    if (session.readyState === WebSocket.OPEN) {
-      session.send(presenceMessage);
+    if (connectedUsers.has(userId)) {
+      const session = connectedUsers.get(userId).session;
+      if (session.readyState === WebSocket.OPEN) {
+        session.send(presenceMessage);
+      }
     }
-  }
+  } catch (err) { console.error("[WS] broadcastContacts Error:", err); }
 }
 
 wss.on('connection', async (ws, req) => {
