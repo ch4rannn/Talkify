@@ -1,9 +1,13 @@
 import { useSettings } from '../data/settingsStore';
+import { useChatStore } from '../data/chatStore';
 import './TopBar.css';
 
 export default function TopBar() {
   const { settings, openSettings } = useSettings();
-  const initial = settings.username ? settings.username.charAt(0).toUpperCase() : 'Y';
+  const { myName } = useChatStore();
+  
+  const displayUsername = myName || settings.username || 'You';
+  const initial = displayUsername.charAt(0).toUpperCase();
 
   return (
     <header className="topbar" id="topbar">
@@ -36,7 +40,7 @@ export default function TopBar() {
             {initial}
           </div>
           <div className="topbar__info">
-            <span className="topbar__name">{settings.username || 'You'}</span>
+            <span className="topbar__name">{displayUsername}</span>
             <span className="topbar__status">
               <span className="topbar__dot" aria-hidden="true" />
               {settings.statusMessage || 'Online'}
