@@ -30,16 +30,36 @@ export default function AddPeoplePanel({ isOpen, onClose }) {
     if (isOpen) { loadPending(); setQuery(''); setResults([]); }
   }, [isOpen, loadPending]);
 
-  // Search users
-  const handleSearch = async (q) => {
+  // Search users with rudimentary debounce & error catch
+  const [searchTimeout, setSearchTimeout] = useState(null);
+
+  const handleSearch = (q) => {
     setQuery(q);
-    if (q.trim().length < 1) { setResults([]); return; }
+    setErrorMsg(null);
+    if (q.trim().length < 1) { 
+      setResults([]); 
+      return; 
+    }
+    
     setSearching(true);
-    try {
-      const res = await fetch(`${BASE}/api/contacts/search?q=${encodeURIComponent(q)}`, { headers });
-      if (res.ok) setResults(await res.json());
-    } catch (e) { console.error(e); }
-    setSearching(false);
+    if (searchTimeout) clearTimeout(searchTimeout);
+
+    const timeout = setTimeout(async () => {
+      try {
+        const res = await fetch(`${BASE}/api/contacts/search?q=${encodeURIComponent(q)}`, { headers });
+        if (res.ok) {
+          setResults(await res.json());
+        } else {
+          setErrorMsg(`Search failed: HTTP ${res.status}`);
+        }
+      } catch (e) { 
+        console.error(e); 
+        setErrorMsg("Network blocked: " + e.message); 
+      }
+      setSearching(false);
+    }, 500); // 500ms debounce
+    
+    setSearchTimeout(timeout);
   };
 
   const [errorMsg, setErrorMsg] = useState(null);
