@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { useChatStore } from '../data/chatStore';
 import './AddPeoplePanel.css';
 import { API_BASE } from '../config';
 
