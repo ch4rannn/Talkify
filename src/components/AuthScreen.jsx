@@ -39,7 +39,11 @@ export default function AuthScreen({ onLogin }) {
     <div className="auth-overlay">
       <div className="auth-card">
         <div className="auth-header">
-          <div className="auth-logo">◈</div>
+          <div className="auth-logo">
+            <svg width="48" height="48" viewBox="0 0 108 108" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M54 24C37.43 24 24 36.31 24 51.5C24 60.21 28.58 67.98 35.72 73.18L32.37 82.83C32.03 83.81 32.95 84.73 33.93 84.39L44.75 80.64C47.68 81.49 50.79 81.99 54 81.99C70.57 81.99 84 69.69 84 54.5C84 39.31 70.57 24 54 24ZM62 45H56V60H52V45H46V41H62V45Z" fill="currentColor" />
+            </svg>
+          </div>
           <h2>Talkify V2</h2>
           <p>{isLogin ? 'Sign in to your account' : 'Create a new account'}</p>
         </div>
