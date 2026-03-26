@@ -54,9 +54,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.requestsButton.setOnClickListener {
-            // Ideally maps to a FriendRequestsActivity, just Toast or start an activity
-            val intent = Intent(this, MainActivity::class.java) // To be replaced in the future
-            // startActivity(intent)
+            startActivity(Intent(this, AddFriendActivity::class.java))
         }
 
         ChatManager.addListener(::updateList)

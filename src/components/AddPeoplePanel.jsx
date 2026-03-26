@@ -42,36 +42,56 @@ export default function AddPeoplePanel({ isOpen, onClose }) {
     setSearching(false);
   };
 
+  const [errorMsg, setErrorMsg] = useState(null);
+
   // Send friend request
   const sendRequest = async (userId) => {
+    setErrorMsg(null);
     try {
-      await fetch(`${BASE}/api/contacts/request`, {
+      const res = await fetch(`${BASE}/api/contacts/request`, {
         method: 'POST', headers, body: JSON.stringify({ userId })
       });
+      if (!res.ok) {
+        const err = await res.json();
+        setErrorMsg(err.error || `HTTP ${res.status} Failure`);
+        return;
+      }
       handleSearch(query); // refresh results
-    } catch (e) { console.error(e); }
+    } catch (e) { setErrorMsg("Network Error: " + e.message); }
   };
 
   // Accept request
   const acceptRequest = async (userId) => {
+    setErrorMsg(null);
     try {
-      await fetch(`${BASE}/api/contacts/accept`, {
+      const res = await fetch(`${BASE}/api/contacts/accept`, {
         method: 'POST', headers, body: JSON.stringify({ userId })
       });
+      if (!res.ok) {
+        const err = await res.json();
+        setErrorMsg(err.error || `HTTP ${res.status} Failure`);
+        return;
+      }
       loadPending(); // refresh local
       fetchPendingCount(); // refresh global badge
-    } catch (e) { console.error(e); }
+    } catch (e) { setErrorMsg("Network Error: " + e.message); }
   };
 
   // Decline request
   const declineRequest = async (userId) => {
+    setErrorMsg(null);
     try {
-      await fetch(`${BASE}/api/contacts/decline`, {
+      const res = await fetch(`${BASE}/api/contacts/decline`, {
         method: 'POST', headers, body: JSON.stringify({ userId })
       });
+      if (!res.ok) {
+        const err = await res.json();
+        setErrorMsg(err.error || `HTTP ${res.status} Failure`);
+        return;
+      }
       loadPending();
       fetchPendingCount(); // refresh global badge
-    } catch (e) { console.error(e); }
+    } catch (e) { setErrorMsg("Network Error: " + e.message); }
   };
 
   if (!isOpen) return null;
@@ -97,6 +117,12 @@ export default function AddPeoplePanel({ isOpen, onClose }) {
             autoFocus
           />
         </div>
+
+        {errorMsg && (
+          <div className="add-people__error" style={{ color: '#ff4d4d', padding: '10px 16px', fontSize: '13px' }}>
+            {errorMsg}
+          </div>
+        )}
 
         {/* Search Results */}
         {query.trim().length > 0 && (

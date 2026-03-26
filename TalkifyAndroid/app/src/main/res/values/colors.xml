@@ -11,6 +11,7 @@
     <color name="text_secondary">#FFA0A0A0</color>
     <color name="text_on_accent">#FF0D0D0D</color>
     <color name="divider">#FF2A2A2A</color>
+    <color name="border">#FF2A2A2A</color>
 
     <!-- Bubbles -->
     <color name="bubble_sent_bg">@color/accent</color>
