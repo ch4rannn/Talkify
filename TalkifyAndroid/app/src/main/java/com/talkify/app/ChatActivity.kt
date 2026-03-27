@@ -10,6 +10,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.talkify.app.adapter.MessageAdapter
 import com.talkify.app.databinding.ActivityChatBinding
 import com.talkify.app.model.ChatManager
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.RequestBody.Companion.asRequestBody
 
 class ChatActivity : AppCompatActivity() {
     private lateinit var binding: ActivityChatBinding
@@ -165,7 +167,7 @@ class ChatActivity : AppCompatActivity() {
 
                 val requestBody = okhttp3.MultipartBody.Builder()
                     .setType(okhttp3.MultipartBody.FORM)
-                    .addFormDataPart("media", file.name, okhttp3.RequestBody.Companion.asRequestBody(file, okhttp3.MediaType.Companion.toMediaTypeOrNull("image/jpeg")))
+                    .addFormDataPart("media", file.name, file.asRequestBody("image/jpeg".toMediaTypeOrNull()))
                     .build()
 
                 val request = okhttp3.Request.Builder()
