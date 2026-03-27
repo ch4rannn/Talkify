@@ -15,4 +15,9 @@
         <item name="android:windowLightNavigationBar">false</item>
     </style>
 
+    <style name="CorneredImageView" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">12dp</item>
+    </style>
+
 </resources>

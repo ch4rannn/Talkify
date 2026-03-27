@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import coil.load
 import com.talkify.app.databinding.ItemMessageReceivedBinding
 import com.talkify.app.databinding.ItemMessageSentBinding
 import com.talkify.app.model.ChatManager
@@ -41,7 +42,23 @@ class MessageAdapter(private val chatId: String?, private val isGroupChat: Boole
 
     inner class SentViewHolder(private val binding: ItemMessageSentBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(message: Message) {
-            binding.sentMessageText.text = message.text
+            if (message.text.isNullOrEmpty()) {
+                binding.sentMessageText.visibility = View.GONE
+            } else {
+                binding.sentMessageText.visibility = View.VISIBLE
+                binding.sentMessageText.text = message.text
+            }
+
+            if (message.mediaUrl.isNullOrEmpty()) {
+                binding.sentMediaImage.visibility = View.GONE
+            } else {
+                binding.sentMediaImage.visibility = View.VISIBLE
+                val url = if (message.mediaUrl.startsWith("http")) message.mediaUrl else "${com.talkify.app.AppConfig.HTTP_BASE}${message.mediaUrl}"
+                binding.sentMediaImage.load(url) {
+                    crossfade(true)
+                }
+            }
+
             binding.sentTimestamp.text = df.format(Date(message.timestamp))
             
             // Read receipt ticks
@@ -56,7 +73,23 @@ class MessageAdapter(private val chatId: String?, private val isGroupChat: Boole
 
     inner class ReceivedViewHolder(private val binding: ItemMessageReceivedBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(message: Message) {
-            binding.receivedMessageText.text = message.text
+            if (message.text.isNullOrEmpty()) {
+                binding.receivedMessageText.visibility = View.GONE
+            } else {
+                binding.receivedMessageText.visibility = View.VISIBLE
+                binding.receivedMessageText.text = message.text
+            }
+
+            if (message.mediaUrl.isNullOrEmpty()) {
+                binding.receivedMediaImage.visibility = View.GONE
+            } else {
+                binding.receivedMediaImage.visibility = View.VISIBLE
+                val url = if (message.mediaUrl.startsWith("http")) message.mediaUrl else "${com.talkify.app.AppConfig.HTTP_BASE}${message.mediaUrl}"
+                binding.receivedMediaImage.load(url) {
+                    crossfade(true)
+                }
+            }
+
             binding.receivedTimestamp.text = df.format(Date(message.timestamp))
             
             if (isGroupChat && message.senderId != null) {

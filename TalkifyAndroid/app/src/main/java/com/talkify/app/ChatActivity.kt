@@ -57,6 +57,10 @@ class ChatActivity : AppCompatActivity() {
         // Setup Listeners
         binding.backButton.setOnClickListener { finish() }
 
+        binding.attachButton.setOnClickListener {
+            pickMediaLauncher.launch("image/*")
+        }
+
         binding.sendButton.setOnClickListener {
             val text = binding.messageInput.text.toString().trim()
             if (text.isNotEmpty()) {
@@ -139,5 +143,57 @@ class ChatActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    private val pickMedia = androidx.activity.result.contract.ActivityResultContracts.GetContent()
+    private val pickMediaLauncher = registerForActivityResult(pickMedia) { uri ->
+        if (uri != null) {
+            uploadImage(uri)
+        }
+    }
+
+    private fun uploadImage(uri: android.net.Uri) {
+        binding.chatStatus.text = "Uploading Image..."
+        Thread {
+            try {
+                val inputStream = contentResolver.openInputStream(uri)
+                val file = java.io.File(cacheDir, "upload_${System.currentTimeMillis()}.jpg")
+                val outputStream = java.io.FileOutputStream(file)
+                inputStream?.copyTo(outputStream)
+                inputStream?.close()
+                outputStream.close()
+
+                val requestBody = okhttp3.MultipartBody.Builder()
+                    .setType(okhttp3.MultipartBody.FORM)
+                    .addFormDataPart("media", file.name, okhttp3.RequestBody.Companion.asRequestBody(file, okhttp3.MediaType.Companion.toMediaTypeOrNull("image/jpeg")))
+                    .build()
+
+                val request = okhttp3.Request.Builder()
+                    .url(com.talkify.app.AppConfig.HTTP_BASE + "/api/upload")
+                    .post(requestBody)
+                    .build()
+
+                val response = okhttp3.OkHttpClient().newCall(request).execute()
+                if (response.isSuccessful) {
+                    val respString = response.body?.string()
+                    val json = org.json.JSONObject(respString ?: "{}")
+                    if (json.has("url")) {
+                        val mediaUrl = json.getString("url")
+                        runOnUiThread {
+                            chatId?.let { ChatManager.sendMessage(it, null, mediaUrl) }
+                            updateTypingStatus() // Reset status
+                        }
+                    }
+                } else {
+                    runOnUiThread {
+                        android.widget.Toast.makeText(this@ChatActivity, "Upload Failed", android.widget.Toast.LENGTH_SHORT).show()
+                        updateTypingStatus()
+                    }
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                runOnUiThread { updateTypingStatus() }
+            }
+        }.start()
     }
 }

@@ -53,4 +53,7 @@ dependencies {
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
     // JSON parsing
     implementation("com.google.code.gson:gson:2.10.1")
+    
+    // Image Loading
+    implementation("io.coil-kt:coil:2.6.0")
 }

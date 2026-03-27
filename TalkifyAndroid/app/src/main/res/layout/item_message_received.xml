@@ -27,6 +27,17 @@
             android:visibility="gone"
             android:layout_marginBottom="2dp" />
 
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/receivedMediaImage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxHeight="250dp"
+            android:adjustViewBounds="true"
+            android:scaleType="centerCrop"
+            android:visibility="gone"
+            app:shapeAppearanceOverlay="@style/CorneredImageView"
+            android:layout_marginBottom="4dp" />
+
         <TextView
             android:id="@+id/receivedMessageText"
             android:layout_width="wrap_content"
