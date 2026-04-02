@@ -9,7 +9,7 @@ const STORAGE_KEY = 'talkify_settings';
 
 const defaultSettings = {
   // Profile
-  username: localStorage.getItem('talkify_username') || 'You',
+  username: localStorage.getItem('talkify_username') || '',
   statusMessage: '',
   // Appearance
   theme: 'dark',        // 'dark' | 'light'
@@ -28,7 +28,12 @@ function loadSettings() {
   try {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored) {
-      return { ...defaultSettings, ...JSON.parse(stored), settingsOpen: false };
+      const parsed = JSON.parse(stored);
+      // Migrate away from old default "You"
+      if (parsed.username === 'You') {
+        parsed.username = localStorage.getItem('talkify_username') || '';
+      }
+      return { ...defaultSettings, ...parsed, settingsOpen: false };
     }
   } catch (e) { /* ignore */ }
   return { ...defaultSettings };

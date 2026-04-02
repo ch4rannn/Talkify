@@ -6,7 +6,7 @@ import NewGroupModal from './NewGroupModal';
 import AddPeoplePanel from './AddPeoplePanel';
 
 export default function Sidebar() {
-  const { chats, activeChatId, selectChat, searchQuery, setSearch, pendingRequestsCount } = useChatStore();
+  const { chats, activeChatId, selectChat, searchQuery, setSearch, pendingRequestsCount, myName } = useChatStore();
   const [showNewGroup, setShowNewGroup] = useState(false);
   const [showAddPeople, setShowAddPeople] = useState(false);
 
@@ -32,7 +32,8 @@ export default function Sidebar() {
     const msgs = chat.messages;
     if (msgs.length === 0) return 'No messages yet';
     const last = msgs[msgs.length - 1];
-    const prefix = last.isSent ? 'You: ' : '';
+    const currentUserName = myName || localStorage.getItem('talkify_username') || '';
+    const prefix = last.isSent ? (currentUserName ? `${currentUserName}: ` : '') : '';
     const text = last.text.length > 28 ? last.text.slice(0, 28) + '…' : last.text;
     return prefix + text;
   };

@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.talkify.app.adapter.ContactAdapter
 import com.talkify.app.databinding.ActivityMainBinding
@@ -22,6 +23,14 @@ class MainActivity : AppCompatActivity() {
     private val client = OkHttpClient()
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        // Apply saved theme before inflating
+        val settingsPrefs = getSharedPreferences("talkify_settings", Context.MODE_PRIVATE)
+        val isDarkMode = settingsPrefs.getBoolean("darkMode", true)
+        AppCompatDelegate.setDefaultNightMode(
+            if (isDarkMode) AppCompatDelegate.MODE_NIGHT_YES
+            else AppCompatDelegate.MODE_NIGHT_NO
+        )
+
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -36,9 +45,7 @@ class MainActivity : AppCompatActivity() {
         binding.contactsRecyclerView.layoutManager = LinearLayoutManager(this)
         binding.contactsRecyclerView.adapter = adapter
 
-        binding.newGroupButton.setOnClickListener {
-            startActivity(Intent(this, NewGroupActivity::class.java))
-        }
+
 
         binding.settingsButton.setOnClickListener {
             startActivity(Intent(this, SettingsActivity::class.java))
@@ -71,8 +78,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun updateList() {
         runOnUiThread {
-            // Combine both groups and contacts, sort by latest message timestamp
-            val allChats = ChatManager.getContactList() + ChatManager.getGroupList()
+            val allChats = ChatManager.getContactList()
             adapter.submitList(allChats.sortedByDescending { it.lastMessage?.timestamp ?: 0L })
         }
     }

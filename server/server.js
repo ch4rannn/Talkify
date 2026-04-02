@@ -200,13 +200,11 @@ app.post('/api/contacts/request', authMiddleware, async (req, res) => {
     );
 
     // Notify the receiver in real-time via WebSocket
-    if (connectedUsers.has(userId)) {
-      const sender = await db.get('SELECT id, username, avatarUrl FROM users WHERE id = ?', [req.user.id]);
-      connectedUsers.get(userId).session.send(JSON.stringify({
-        type: 'FRIEND_REQUEST',
-        payload: { from: sender }
-      }));
-    }
+    const sender = await db.get('SELECT id, username, avatarUrl FROM users WHERE id = ?', [req.user.id]);
+    sendToUser(userId, JSON.stringify({
+      type: 'FRIEND_REQUEST',
+      payload: { from: sender }
+    }));
 
     res.json({ success: true });
   } catch (err) {
@@ -282,13 +280,31 @@ app.get('/api/contacts/pending', authMiddleware, async (req, res) => {
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
 
-// Active connections mapping: userId -> session logic
+// Active connections mapping: userId -> Set of session logic
 const connectedUsers = new Map();
+
+function sendToUser(userId, messageString) {
+  if (connectedUsers.has(userId)) {
+    for (const conn of connectedUsers.get(userId)) {
+      if (conn.session.readyState === WebSocket.OPEN) {
+        conn.session.send(messageString);
+      }
+    }
+  }
+}
 
 async function broadcastPresence() {
   try {
-    for (const [userId, data] of connectedUsers.entries()) {
-      if (data.session.readyState === WebSocket.OPEN) {
+    for (const [userId, connections] of connectedUsers.entries()) {
+      // Just check if there's any active connection
+      let hasActive = false;
+      for (const conn of connections) {
+        if (conn.session.readyState === WebSocket.OPEN) {
+          hasActive = true;
+          break;
+        }
+      }
+      if (hasActive) {
         await broadcastContactsToUser(userId);
       }
     }
@@ -309,12 +325,7 @@ async function broadcastContactsToUser(userId) {
       payload: contacts
     });
 
-    if (connectedUsers.has(userId)) {
-      const session = connectedUsers.get(userId).session;
-      if (session.readyState === WebSocket.OPEN) {
-        session.send(presenceMessage);
-      }
-    }
+    sendToUser(userId, presenceMessage);
   } catch (err) { console.error("[WS] broadcastContacts Error:", err); }
 }
 
@@ -334,7 +345,11 @@ wss.on('connection', async (ws, req) => {
     const decoded = jwt.verify(token, JWT_SECRET);
     currentUserId = decoded.id;
     
-    connectedUsers.set(currentUserId, { session: ws, username: decoded.username });
+    if (!connectedUsers.has(currentUserId)) {
+      connectedUsers.set(currentUserId, new Set());
+    }
+    const connectionData = { session: ws };
+    connectedUsers.get(currentUserId).add(connectionData);
     
     // Mark online in DB
     await db.run('UPDATE users SET isOnline = 1 WHERE id = ?', [currentUserId]);
@@ -374,25 +389,28 @@ wss.on('connection', async (ws, req) => {
         });
 
         // 1-to-1 strict routing
+        let sentToReceiver = false;
         if (connectedUsers.has(receiverId)) {
-          const receiver = connectedUsers.get(receiverId);
-          if (receiver.session.readyState === WebSocket.OPEN) {
-            receiver.session.send(outgoingMsg);
-            
-            // Auto-update to DELIVERED since the backend knows it passed through actively
-            await db.run('UPDATE messages SET status = "DELIVERED" WHERE id = ?', [msgId]);
-            const deliveredEcho = JSON.stringify({
-              type: 'MESSAGE_STATUS',
-              payload: { messageId: msgId, status: 'DELIVERED', chatId: receiverId } 
-            });
-            ws.send(deliveredEcho); // Tell sender it was delivered
+          for (const conn of connectedUsers.get(receiverId)) {
+            if (conn.session.readyState === WebSocket.OPEN) {
+              conn.session.send(outgoingMsg);
+              sentToReceiver = true;
+            }
           }
         }
-
-        // Echo back to sender
-        if (ws.readyState === WebSocket.OPEN) {
-          ws.send(outgoingMsg);
+        
+        if (sentToReceiver) {
+          // Auto-update to DELIVERED since the backend knows it passed through actively
+          await db.run('UPDATE messages SET status = "DELIVERED" WHERE id = ?', [msgId]);
+          const deliveredEcho = JSON.stringify({
+            type: 'MESSAGE_STATUS',
+            payload: { messageId: msgId, status: 'DELIVERED', chatId: receiverId } 
+          });
+          sendToUser(currentUserId, deliveredEcho); // Tell sender's devices it was delivered
         }
+
+        // Echo back to all of sender's devices
+        sendToUser(currentUserId, outgoingMsg);
       }
       
       else if (message.type === 'MARK_SEEN') {
@@ -406,51 +424,40 @@ wss.on('connection', async (ws, req) => {
         );
 
         // Tell the original sender I've seen them
-        if (connectedUsers.has(senderId)) {
-          connectedUsers.get(senderId).session.send(JSON.stringify({
-            type: 'MESSAGES_SEEN',
-            payload: { seenBy: currentUserId }
-          }));
-        }
+        sendToUser(senderId, JSON.stringify({
+          type: 'MESSAGES_SEEN',
+          payload: { seenBy: currentUserId }
+        }));
       }
 
       else if (message.type === 'TYPING') {
         // Volatile (No DB)
         const { receiverId, isTyping } = message.payload;
-        if (connectedUsers.has(receiverId)) {
-          connectedUsers.get(receiverId).session.send(JSON.stringify({
-            type: 'TYPING_INDICATOR',
-            payload: { senderId: currentUserId, isTyping }
-          }));
-        }
+        sendToUser(receiverId, JSON.stringify({
+          type: 'TYPING_INDICATOR',
+          payload: { senderId: currentUserId, isTyping }
+        }));
       }
       else if (message.type === 'START_CALL') {
         const { targetUserId, callType, roomID } = message.payload;
-        if (connectedUsers.has(targetUserId)) {
-          const senderInfo = connectedUsers.get(currentUserId);
-          connectedUsers.get(targetUserId).session.send(JSON.stringify({
-            type: 'INCOMING_CALL',
-            payload: { fromUserId: currentUserId, fromName: senderInfo.username, callType, roomID }
-          }));
-        }
+        sendToUser(targetUserId, JSON.stringify({
+          type: 'INCOMING_CALL',
+          payload: { fromUserId: currentUserId, fromName: decoded.username, callType, roomID }
+        }));
       }
       else if (message.type === 'CANCEL_CALL') {
         const { targetUserId } = message.payload;
-        if (connectedUsers.has(targetUserId)) {
-          connectedUsers.get(targetUserId).session.send(JSON.stringify({
-            type: 'CALL_CANCELLED',
-            payload: { fromUserId: currentUserId }
-          }));
-        }
+        sendToUser(targetUserId, JSON.stringify({
+          type: 'CALL_CANCELLED',
+          payload: { fromUserId: currentUserId }
+        }));
       }
       else if (message.type === 'END_CALL') {
         const { targetUserId } = message.payload;
-        if (connectedUsers.has(targetUserId)) {
-          connectedUsers.get(targetUserId).session.send(JSON.stringify({
-            type: 'CALL_ENDED',
-            payload: { fromUserId: currentUserId }
-          }));
-        }
+        sendToUser(targetUserId, JSON.stringify({
+          type: 'CALL_ENDED',
+          payload: { fromUserId: currentUserId }
+        }));
       }
     } catch (e) {
       console.error("Message parse error", e);
@@ -458,11 +465,21 @@ wss.on('connection', async (ws, req) => {
   });
 
   ws.on('close', async () => {
-    if (currentUserId) {
-      connectedUsers.delete(currentUserId);
-      await db.run('UPDATE users SET isOnline = 0, lastSeen = ? WHERE id = ?', [new Date().toISOString(), currentUserId]);
-      broadcastPresence();
-      console.log(`[-] User Offline: ${currentUserId}`);
+    if (currentUserId && connectedUsers.has(currentUserId)) {
+      const connections = connectedUsers.get(currentUserId);
+      for (const conn of connections) {
+        if (conn.session === ws) {
+          connections.delete(conn);
+          break;
+        }
+      }
+      
+      if (connections.size === 0) {
+        connectedUsers.delete(currentUserId);
+        await db.run('UPDATE users SET isOnline = 0, lastSeen = ? WHERE id = ?', [new Date().toISOString(), currentUserId]);
+        broadcastPresence();
+        console.log(`[-] User Offline: ${currentUserId}`);
+      }
     }
   });
 });

@@ -46,10 +46,9 @@ dependencies {
     implementation("androidx.constraintlayout:constraintlayout:2.2.0")
     implementation("androidx.recyclerview:recyclerview:1.4.0")
     implementation("androidx.activity:activity-ktx:1.9.3")
+    implementation("androidx.cardview:cardview:1.0.0")
     
-    // ZegoCloud Call UI Kit
-    implementation("com.github.ZEGOCLOUD:zego_uikit_prebuilt_call_android:+")
-    
+
     // OkHttp Websockets
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
     // JSON parsing

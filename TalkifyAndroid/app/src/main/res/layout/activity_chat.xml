@@ -62,26 +62,6 @@
                 android:textSize="@dimen/text_meta" />
 
         </LinearLayout>
-        
-        <ImageButton
-            android:id="@+id/audioCallButton"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/ic_audio_call"
-            android:contentDescription="Voice Call"
-            android:scaleType="centerInside"
-            android:layout_marginEnd="@dimen/space_sm" />
-
-        <ImageButton
-            android:id="@+id/videoCallButton"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/ic_video_call"
-            android:contentDescription="Video Call"
-            android:scaleType="centerInside" />
-
     </LinearLayout>
 
     <View

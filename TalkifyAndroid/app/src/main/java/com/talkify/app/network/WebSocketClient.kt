@@ -7,14 +7,12 @@ import com.talkify.app.AppConfig
 import okhttp3.*
 import java.util.concurrent.TimeUnit
 
-data class WsMessage(val type: String, val userId: String? = null, val username: String? = null, val payload: Any? = null)
+data class WsMessage(val type: String, val userId: String? = null, val username: String? = null, val payload: com.google.gson.JsonElement? = null)
 data class WsPresenceUser(val userId: String, val username: String, val avatarUrl: String? = null, val isOnline: Boolean? = false, val lastSeen: String? = null)
 data class WsPrivatePayload(val id: String? = null, val senderId: String, val receiverId: String, val content: String?, val mediaUrl: String? = null, val status: String? = null, val timestamp: Long)
 data class WsStatusPayload(val messageId: String, val status: String, val chatId: String)
 data class WsTypingPayload(val senderId: String, val isTyping: Boolean)
 data class WsSeenPayload(val seenBy: String)
-data class WsCallPayload(val targetUserId: String)
-
 object WebSocketClient {
     private val client = OkHttpClient.Builder()
         .readTimeout(0, TimeUnit.MILLISECONDS)
@@ -37,6 +35,10 @@ object WebSocketClient {
     }
     
     private fun doConnect(token: String) {
+        // Cancel the prior socket if it exists to prevent memory leaks and zombie connections
+        webSocket?.cancel()
+        webSocket = null
+
         // Inject the JWT into the URL query for server-side handshake validation
         val url = "$BASE_URL/?token=$token"
         val request = Request.Builder().url(url).build()
@@ -57,32 +59,24 @@ object WebSocketClient {
                             ChatManager.myName = msg.username
                         }
                         "PRESENCE_UPDATE" -> {
-                            val usersStr = gson.toJson(msg.payload)
-                            val users = gson.fromJson(usersStr, Array<WsPresenceUser>::class.java).toList()
+                            val users = gson.fromJson(msg.payload, Array<WsPresenceUser>::class.java).toList()
                             ChatManager.syncPresence(users)
                         }
                         "RECEIVE_MESSAGE" -> {
-                            val payloadStr = gson.toJson(msg.payload)
-                            val payload = gson.fromJson(payloadStr, WsPrivatePayload::class.java)
+                            val payload = gson.fromJson(msg.payload, WsPrivatePayload::class.java)
                             ChatManager.receiveApiMessage(payload)
                         }
                         "MESSAGE_STATUS" -> {
-                            val payloadStr = gson.toJson(msg.payload)
-                            val payload = gson.fromJson(payloadStr, WsStatusPayload::class.java)
+                            val payload = gson.fromJson(msg.payload, WsStatusPayload::class.java)
                             ChatManager.updateMessageStatus(payload.messageId, payload.status, payload.chatId)
                         }
                         "MESSAGES_SEEN" -> {
-                            val payloadStr = gson.toJson(msg.payload)
-                            val payload = gson.fromJson(payloadStr, WsSeenPayload::class.java)
+                            val payload = gson.fromJson(msg.payload, WsSeenPayload::class.java)
                             ChatManager.markAllSeenFor(payload.seenBy)
                         }
                         "TYPING_INDICATOR" -> {
-                            val payloadStr = gson.toJson(msg.payload)
-                            val payload = gson.fromJson(payloadStr, WsTypingPayload::class.java)
+                            val payload = gson.fromJson(msg.payload, WsTypingPayload::class.java)
                             ChatManager.setTyping(payload.senderId, payload.isTyping)
-                        }
-                        "CALL_ENDED" -> {
-                            ChatManager.handleCallEnded()
                         }
                     }
                 } catch (e: Exception) {
@@ -130,12 +124,6 @@ object WebSocketClient {
     fun sendTyping(receiverId: String, isTyping: Boolean) {
         val payload = mapOf("receiverId" to receiverId, "isTyping" to isTyping)
         val msg = mapOf("type" to "TYPING", "payload" to payload)
-        webSocket?.send(gson.toJson(msg))
-    }
-
-    fun sendEndCall(targetUserId: String) {
-        val payload = mapOf("targetUserId" to targetUserId)
-        val msg = mapOf("type" to "END_CALL", "payload" to payload)
         webSocket?.send(gson.toJson(msg))
     }
 

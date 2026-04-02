@@ -38,9 +38,6 @@ class ChatActivity : AppCompatActivity() {
             return
         }
 
-        ChatManager.activeChatId = chatId
-        ChatManager.markAsRead(contact.id)
-
         // Setup Header
         binding.chatName.text = contact.name
         binding.chatAvatar.text = contact.initials
@@ -87,37 +84,25 @@ class ChatActivity : AppCompatActivity() {
             override fun afterTextChanged(s: Editable?) {}
         })
 
-        binding.audioCallButton.setOnClickListener {
-            startCallActivity(contact.id, false)
-        }
-
-        binding.videoCallButton.setOnClickListener {
-            startCallActivity(contact.id, true)
-        }
-
         ChatManager.addListener(chatListener)
         updateMessages()
     }
 
-    private fun startCallActivity(contactId: String, isVideoCall: Boolean) {
-        val prefs = getSharedPreferences("talkify_prefs", android.content.Context.MODE_PRIVATE)
-        val userId = prefs.getString("talkify_userId", "User_${System.currentTimeMillis() % 10000}") ?: "User_${System.currentTimeMillis() % 10000}"
-        val userName = prefs.getString("talkify_username", "You") ?: "You"
-        val intent = android.content.Intent(this, CallActivity::class.java).apply {
-            putExtra("roomID", "talkify_room_$contactId")
-            putExtra("isVideoCall", isVideoCall)
-            putExtra("targetUserId", contactId)
-            putExtra("userID", userId)
-            putExtra("userName", userName)
+    override fun onResume() {
+        super.onResume()
+        ChatManager.activeChatId = chatId
+        chatId?.let { ChatManager.markAsRead(it) }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        if (ChatManager.activeChatId == chatId) {
+            ChatManager.activeChatId = null
         }
-        startActivity(intent)
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        if (ChatManager.activeChatId == chatId) {
-            ChatManager.activeChatId = null
-        }
         ChatManager.removeListener(chatListener)
     }
 
@@ -125,7 +110,9 @@ class ChatActivity : AppCompatActivity() {
         chatId?.let {
             val msgs = ChatManager.getMessages(it)
             adapter.submitList(msgs.toList()) {
-                if (msgs.isNotEmpty()) {
+                val autoScroll = getSharedPreferences("talkify_settings", android.content.Context.MODE_PRIVATE)
+                    .getBoolean("autoScroll", true)
+                if (msgs.isNotEmpty() && autoScroll) {
                     binding.messagesRecyclerView.scrollToPosition(msgs.size - 1)
                 }
             }

@@ -11,7 +11,6 @@ object ChatManager {
     var myName: String? = null
 
     private val dynamicContacts = mutableMapOf<String, Contact>()
-    private val mutableGroups = mutableListOf<Contact>()
 
     // Current app state
     private val messages = mutableMapOf<String, MutableList<Message>>()
@@ -21,7 +20,6 @@ object ChatManager {
     
     // Callbacks
     private val listeners = mutableListOf<() -> Unit>()
-    private val callListeners = mutableListOf<() -> Unit>()
 
     fun syncPresence(users: List<WsPresenceUser>) {
         users.forEach { u ->
@@ -90,14 +88,8 @@ object ChatManager {
         return dynamicContacts.values.filter { !it.isGroup }.sortedBy { it.name }
     }
 
-    fun getGroupList(): List<ChatItem> {
-        return mutableGroups.map { g ->
-            ChatItem(g, messages[g.id]?.lastOrNull(), unreadCounts[g.id] ?: 0)
-        }.sortedByDescending { it.lastMessage?.timestamp ?: 0 }
-    }
-
     fun getContactById(id: String): Contact? {
-        return dynamicContacts[id] ?: mutableGroups.find { it.id == id }
+        return dynamicContacts[id]
     }
 
     fun getMessages(chatId: String): List<Message> {
@@ -126,12 +118,14 @@ object ChatManager {
         notifyListeners()
     }
 
-    fun createGroup(name: String, memberIds: List<String>): Contact {
-        val newGroup = Contact("g${System.currentTimeMillis()}", name, isGroup = true, members = memberIds)
-        mutableGroups.add(newGroup)
+    fun clearAllMessages() {
+        messages.clear()
+        unreadCounts.clear()
+        typingStates.clear()
         notifyListeners()
-        return newGroup
     }
+
+
 
     fun addListener(listener: () -> Unit) {
         if (!listeners.contains(listener)) listeners.add(listener)
@@ -141,19 +135,7 @@ object ChatManager {
         listeners.remove(listener)
     }
 
-    fun addCallListener(listener: () -> Unit) {
-        if (!callListeners.contains(listener)) callListeners.add(listener)
-    }
 
-    fun removeCallListener(listener: () -> Unit) {
-        callListeners.remove(listener)
-    }
-
-    fun handleCallEnded() {
-        Handler(Looper.getMainLooper()).post {
-            callListeners.forEach { it.invoke() }
-        }
-    }
 
     private fun notifyListeners() {
         Handler(Looper.getMainLooper()).post {

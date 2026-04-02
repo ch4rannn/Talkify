@@ -6,8 +6,8 @@ export default function TopBar() {
   const { settings, openSettings } = useSettings();
   const { myName } = useChatStore();
   
-  const displayUsername = myName || settings.username || 'You';
-  const initial = displayUsername.charAt(0).toUpperCase();
+  const displayUsername = myName || settings.username || localStorage.getItem('talkify_username') || '';
+  const initial = displayUsername ? displayUsername.charAt(0).toUpperCase() : '?';
 
   return (
     <header className="topbar" id="topbar">

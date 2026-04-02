@@ -72,6 +72,38 @@
                 android:padding="@dimen/space_md"
                 android:layout_marginBottom="@dimen/space_lg">
 
+                <!-- Avatar Upload UI -->
+                <FrameLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginBottom="@dimen/space_md">
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        app:cardCornerRadius="40dp"
+                        app:cardElevation="0dp"
+                        app:cardBackgroundColor="@color/bg">
+                        <ImageView
+                            android:id="@+id/avatarImage"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:scaleType="centerCrop"
+                            android:src="?attr/selectableItemBackground" />
+                    </androidx.cardview.widget.CardView>
+
+                    <ImageButton
+                        android:id="@+id/editAvatarButton"
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:layout_gravity="bottom|end"
+                        android:background="@drawable/bg_bubble_sent"
+                        android:src="@android:drawable/ic_menu_edit"
+                        android:padding="4dp"
+                        app:tint="@color/text_primary"/>
+                </FrameLayout>
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -110,6 +142,40 @@
                     android:hint="What's on your mind?"
                     android:textColorHint="@color/text_secondary"
                     android:singleLine="true"/>
+            </LinearLayout>
+
+            <!-- Appearance Section -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="APPEARANCE"
+                android:textColor="@color/text_secondary"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.1"
+                android:layout_marginBottom="@dimen/space_sm"
+                android:layout_marginTop="@dimen/space_md"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@drawable/bg_bubble_received"
+                android:paddingStart="@dimen/space_md"
+                android:paddingEnd="@dimen/space_md"
+                android:paddingTop="@dimen/space_sm"
+                android:paddingBottom="@dimen/space_sm"
+                android:layout_marginBottom="@dimen/space_lg">
+
+                <com.google.android.material.materialswitch.MaterialSwitch
+                    android:id="@+id/switchDarkMode"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Dark Mode"
+                    android:textColor="@color/text_primary"
+                    android:paddingTop="@dimen/space_sm"
+                    android:paddingBottom="@dimen/space_sm"/>
+
             </LinearLayout>
 
             <!-- Chat Section -->
@@ -154,6 +220,61 @@
                     android:paddingTop="@dimen/space_sm"
                     android:paddingBottom="@dimen/space_sm"/>
 
+                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/divider" android:layout_marginTop="4dp" android:layout_marginBottom="4dp"/>
+
+                <com.google.android.material.materialswitch.MaterialSwitch
+                    android:id="@+id/switchAutoScroll"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Auto-scroll"
+                    android:textColor="@color/text_primary"
+                    android:paddingTop="@dimen/space_sm"
+                    android:paddingBottom="@dimen/space_sm"/>
+
+            </LinearLayout>
+
+            <!-- Notifications Section -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="NOTIFICATIONS"
+                android:textColor="@color/text_secondary"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.1"
+                android:layout_marginBottom="@dimen/space_sm" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@drawable/bg_bubble_received"
+                android:paddingStart="@dimen/space_md"
+                android:paddingEnd="@dimen/space_md"
+                android:paddingTop="@dimen/space_sm"
+                android:paddingBottom="@dimen/space_sm"
+                android:layout_marginBottom="@dimen/space_lg">
+
+                <com.google.android.material.materialswitch.MaterialSwitch
+                    android:id="@+id/switchNotifications"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Enable Notifications"
+                    android:textColor="@color/text_primary"
+                    android:paddingTop="@dimen/space_sm"
+                    android:paddingBottom="@dimen/space_sm"/>
+
+                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/divider" android:layout_marginTop="4dp" android:layout_marginBottom="4dp"/>
+
+                <com.google.android.material.materialswitch.MaterialSwitch
+                    android:id="@+id/switchMessageSound"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Message Sound"
+                    android:textColor="@color/text_primary"
+                    android:paddingTop="@dimen/space_sm"
+                    android:paddingBottom="@dimen/space_sm"/>
+
             </LinearLayout>
 
             <!-- Account Section -->
@@ -169,6 +290,16 @@
                 android:layout_marginTop="@dimen/space_md"/>
 
             <com.google.android.material.button.MaterialButton
+                android:id="@+id/clearHistoryButton"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:text="Clear All Chat History"
+                app:backgroundTint="#424242"
+                android:textColor="#FFFFFF"
+                app:cornerRadius="12dp"
+                android:layout_marginTop="8dp" />
+
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/logoutButton"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
@@ -177,6 +308,16 @@
                 android:textColor="#FFFFFF"
                 app:cornerRadius="12dp"
                 android:layout_marginTop="8dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Talkify v2.0.0"
+                android:textColor="@color/text_secondary"
+                android:textSize="12sp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="32dp"
+                android:layout_marginBottom="32dp"/>
 
         </LinearLayout>
     </ScrollView>
