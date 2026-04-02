@@ -1,32 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:gravity="center_vertical"
-    android:padding="@dimen/space_sm"
-    android:paddingStart="@dimen/space_md"
-    android:paddingEnd="@dimen/space_md">
+    android:paddingHorizontal="16dp"
+    android:paddingVertical="12dp">
 
     <!-- Avatar -->
     <FrameLayout
-        android:layout_width="@dimen/avatar_size"
-        android:layout_height="@dimen/avatar_size">
+        android:layout_width="48dp"
+        android:layout_height="48dp">
 
         <TextView
             android:id="@+id/contactAvatar"
-            android:layout_width="@dimen/avatar_size"
-            android:layout_height="@dimen/avatar_size"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             android:background="@drawable/bg_avatar"
             android:gravity="center"
-            android:textColor="@color/text_primary"
+            android:textColor="@color/accent"
             android:textStyle="bold"
-            android:textSize="14sp" />
+            android:textSize="16sp" />
 
         <View
             android:id="@+id/onlineDot"
-            android:layout_width="@dimen/online_dot_size"
-            android:layout_height="@dimen/online_dot_size"
+            android:layout_width="12dp"
+            android:layout_height="12dp"
             android:layout_gravity="bottom|end"
             android:background="@drawable/bg_badge" />
 
@@ -38,7 +38,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:orientation="vertical"
-        android:layout_marginStart="@dimen/space_sm">
+        android:layout_marginStart="14dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -52,8 +52,9 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:textColor="@color/text_primary"
-                android:textSize="@dimen/text_body"
+                android:textSize="16sp"
                 android:textStyle="bold"
+                android:fontFamily="sans-serif-medium"
                 android:ellipsize="end"
                 android:maxLines="1" />
 
@@ -62,8 +63,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/text_secondary"
-                android:textSize="@dimen/text_meta"
-                android:layout_marginStart="@dimen/space_sm" />
+                android:textSize="12sp"
+                android:layout_marginStart="8dp" />
 
         </LinearLayout>
 
@@ -72,7 +73,7 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center_vertical"
-            android:layout_marginTop="2dp">
+            android:layout_marginTop="3dp">
 
             <TextView
                 android:id="@+id/contactPreview"
@@ -80,20 +81,21 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:textColor="@color/text_secondary"
-                android:textSize="@dimen/text_meta"
+                android:textSize="13sp"
                 android:ellipsize="end"
                 android:maxLines="1" />
 
             <TextView
                 android:id="@+id/unreadBadge"
-                android:layout_width="@dimen/badge_size"
-                android:layout_height="@dimen/badge_size"
+                android:layout_width="22dp"
+                android:layout_height="22dp"
                 android:background="@drawable/bg_badge"
                 android:gravity="center"
                 android:textColor="@color/badge_text"
-                android:textSize="10sp"
+                android:textSize="11sp"
                 android:textStyle="bold"
-                android:visibility="gone" />
+                android:visibility="gone"
+                android:layout_marginStart="8dp" />
 
         </LinearLayout>
 

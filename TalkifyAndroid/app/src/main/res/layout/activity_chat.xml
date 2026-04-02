@@ -7,15 +7,15 @@
     android:fitsSystemWindows="true"
     android:background="@color/bg">
 
-    <!-- Chat Header -->
+    <!-- ═══ Chat Header ═══ -->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/topbar_height"
+        android:layout_height="60dp"
         android:orientation="horizontal"
         android:gravity="center_vertical"
         android:background="@color/surface"
-        android:paddingStart="@dimen/space_md"
-        android:paddingEnd="@dimen/space_lg">
+        android:paddingStart="8dp"
+        android:paddingEnd="12dp">
 
         <!-- Back button -->
         <ImageButton
@@ -23,75 +23,99 @@
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@android:drawable/ic_menu_revert"
+            android:src="@drawable/ic_back"
             android:contentDescription="Back"
-            android:scaleType="centerInside" />
+            android:scaleType="centerInside"
+            android:padding="8dp"
+            app:tint="@color/text_primary" />
 
         <!-- Avatar -->
         <TextView
             android:id="@+id/chatAvatar"
-            android:layout_width="@dimen/avatar_size_small"
-            android:layout_height="@dimen/avatar_size_small"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:background="@drawable/bg_avatar"
             android:gravity="center"
-            android:textColor="@color/text_primary"
+            android:textColor="@color/accent"
             android:textStyle="bold"
-            android:textSize="13sp"
-            android:layout_marginStart="@dimen/space_sm" />
+            android:textSize="14sp"
+            android:layout_marginStart="4dp" />
 
+        <!-- Name & Status -->
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:orientation="vertical"
-            android:layout_marginStart="@dimen/space_sm">
+            android:layout_marginStart="12dp">
 
             <TextView
                 android:id="@+id/chatName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/text_primary"
-                android:textSize="@dimen/text_body"
-                android:textStyle="bold" />
+                android:textSize="17sp"
+                android:textStyle="bold"
+                android:fontFamily="sans-serif-medium" />
 
             <TextView
                 android:id="@+id/chatStatus"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/text_secondary"
-                android:textSize="@dimen/text_meta" />
+                android:textColor="@color/accent"
+                android:textSize="12sp"
+                android:layout_marginTop="1dp" />
 
         </LinearLayout>
+
+        <!-- Audio Call -->
+        <ImageButton
+            android:id="@+id/audioCallButton"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_audio_call"
+            android:contentDescription="Audio Call"
+            android:scaleType="centerInside"
+            android:padding="8dp"
+            app:tint="@color/text_secondary" />
+
+        <!-- Video Call -->
+        <ImageButton
+            android:id="@+id/videoCallButton"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="4dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_video_call"
+            android:contentDescription="Video Call"
+            android:scaleType="centerInside"
+            android:padding="8dp"
+            app:tint="@color/text_secondary" />
+
     </LinearLayout>
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/divider" />
-
-    <!-- Messages -->
+    <!-- ═══ Messages ═══ -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/messagesRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
         android:clipToPadding="false"
-        android:padding="@dimen/space_sm" />
+        android:padding="8dp"
+        android:background="@color/bg" />
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/divider" />
-
-    <!-- Input Bar -->
+    <!-- ═══ Input Bar ═══ -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center_vertical"
         android:background="@color/surface"
-        android:padding="@dimen/space_sm">
+        android:paddingHorizontal="8dp"
+        android:paddingVertical="8dp">
 
+        <!-- Attach -->
         <ImageButton
             android:id="@+id/attachButton"
             android:layout_width="40dp"
@@ -99,43 +123,39 @@
             android:background="?attr/selectableItemBackgroundBorderless"
             android:src="@android:drawable/ic_menu_gallery"
             android:contentDescription="Attach Image"
-            app:tint="@color/text_secondary"
-            android:layout_marginEnd="8dp" />
+            android:scaleType="centerInside"
+            android:padding="8dp"
+            app:tint="@color/text_secondary" />
 
-        <LinearLayout
+        <!-- Text Input (pill shape) -->
+        <EditText
+            android:id="@+id/messageInput"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="44dp"
             android:layout_weight="1"
+            android:layout_marginHorizontal="8dp"
             android:background="@drawable/bg_input"
-            android:gravity="center_vertical"
-            android:paddingStart="@dimen/space_md"
-            android:paddingEnd="@dimen/space_sm">
+            android:hint="@string/type_message_hint"
+            android:textColorHint="@color/text_secondary"
+            android:textColor="@color/text_primary"
+            android:textSize="15sp"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:maxLines="3"
+            android:inputType="textMultiLine"
+            android:importantForAutofill="no" />
 
-            <EditText
-                android:id="@+id/messageInput"
-                android:layout_width="match_parent"
-                android:layout_height="44dp"
-                android:background="@android:color/transparent"
-                android:hint="@string/type_message_hint"
-                android:textColorHint="@color/text_secondary"
-                android:textColor="@color/text_primary"
-                android:textSize="@dimen/text_body"
-                android:maxLines="3"
-                android:inputType="textMultiLine"
-                android:importantForAutofill="no" />
-
-        </LinearLayout>
-
+        <!-- Send Button (circular teal) -->
         <ImageButton
             android:id="@+id/sendButton"
-            android:layout_width="@dimen/send_button_size"
-            android:layout_height="@dimen/send_button_size"
-            android:layout_marginStart="@dimen/space_sm"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
             android:background="@drawable/bg_send_button"
             android:src="@drawable/ic_send"
             android:contentDescription="@string/send"
             android:scaleType="centerInside"
-            android:padding="10dp" />
+            android:padding="10dp"
+            app:tint="@color/text_on_accent" />
 
     </LinearLayout>
 

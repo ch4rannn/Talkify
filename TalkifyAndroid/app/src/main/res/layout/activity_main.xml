@@ -9,125 +9,123 @@
     android:background="@color/bg"
     tools:context=".MainActivity">
 
-    <!-- Top Bar -->
+    <!-- ═══ Top Bar ═══ -->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/topbar_height"
+        android:layout_height="60dp"
         android:orientation="horizontal"
         android:gravity="center_vertical"
         android:background="@color/surface"
-        android:paddingStart="@dimen/space_lg"
-        android:paddingEnd="@dimen/space_lg">
+        android:paddingStart="16dp"
+        android:paddingEnd="12dp">
 
-        <LinearLayout
+        <!-- Logo + Title -->
+        <ImageView
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:src="@drawable/ic_logo"
+            app:tint="@color/accent"
+            android:contentDescription="Logo" />
+
+        <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:orientation="horizontal"
-            android:gravity="center_vertical">
+            android:text="Talkify"
+            android:textColor="@color/text_primary"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:fontFamily="sans-serif-medium"
+            android:layout_marginStart="10dp" />
 
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@drawable/ic_logo"
-                android:layout_marginEnd="8dp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Talkify"
-                android:textColor="@color/text_primary"
-                android:textSize="@dimen/text_title"
-                android:textStyle="bold" />
-        </LinearLayout>
-
+        <!-- Friend Requests -->
         <FrameLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/space_sm">
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginEnd="4dp">
 
             <ImageButton
                 android:id="@+id/requestsButton"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:src="@drawable/ic_person_add"
                 android:contentDescription="Friend Requests"
+                android:scaleType="centerInside"
+                android:padding="8dp"
                 app:tint="@color/text_secondary" />
 
             <TextView
                 android:id="@+id/requestsBadge"
-                android:layout_width="16dp"
-                android:layout_height="16dp"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
                 android:layout_gravity="top|end"
+                android:layout_marginTop="2dp"
+                android:layout_marginEnd="2dp"
                 android:background="@drawable/bg_badge"
                 android:text="1"
                 android:textColor="@color/badge_text"
                 android:textSize="10sp"
+                android:textStyle="bold"
                 android:gravity="center"
                 android:visibility="gone" />
         </FrameLayout>
 
+        <!-- Settings -->
         <ImageButton
             android:id="@+id/settingsButton"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:layout_marginEnd="@dimen/space_sm"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginEnd="8dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:src="@drawable/ic_settings"
             android:contentDescription="Settings"
+            android:scaleType="centerInside"
+            android:padding="8dp"
             app:tint="@color/text_secondary" />
 
+        <!-- User Avatar -->
         <TextView
             android:id="@+id/avatarText"
-            android:layout_width="@dimen/avatar_size_small"
-            android:layout_height="@dimen/avatar_size_small"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
             android:background="@drawable/bg_avatar"
             android:gravity="center"
-            android:text="Y"
-            android:textColor="@color/text_primary"
+            android:text="C"
+            android:textColor="@color/accent"
             android:textStyle="bold"
-            android:textSize="14sp" />
+            android:textSize="15sp" />
 
     </LinearLayout>
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/divider" />
-
-    <!-- Search -->
+    <!-- ═══ Search Bar ═══ -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center_vertical"
-        android:background="@color/surface"
-        android:padding="@dimen/space_md">
+        android:background="@color/bg"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="10dp">
 
         <EditText
             android:id="@+id/searchInput"
             android:layout_width="match_parent"
-            android:layout_height="40dp"
+            android:layout_height="42dp"
             android:background="@drawable/bg_input"
             android:hint="@string/search_hint"
             android:textColorHint="@color/text_secondary"
             android:textColor="@color/text_primary"
             android:textSize="14sp"
-            android:paddingStart="@dimen/space_md"
-            android:paddingEnd="@dimen/space_md"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
             android:singleLine="true"
             android:importantForAutofill="no"
             android:inputType="text" />
 
     </LinearLayout>
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/divider" />
-
-    <!-- Contact & Group List -->
+    <!-- ═══ Contact List ═══ -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/contactsRecyclerView"
         android:layout_width="match_parent"
@@ -135,8 +133,7 @@
         android:layout_weight="1"
         android:background="@color/bg"
         android:clipToPadding="false"
-        android:paddingTop="@dimen/space_sm"
-        android:paddingBottom="@dimen/space_sm" />
-
+        android:paddingTop="4dp"
+        android:paddingBottom="4dp" />
 
 </LinearLayout>
