@@ -51,6 +51,12 @@ export default function AddPeoplePanel({ isOpen, onClose }) {
         });
         if (res.ok) {
           setResults(await res.json());
+        } else if (res.status === 401) {
+          setErrorMsg('Session expired. Logging out…');
+          setTimeout(() => {
+            localStorage.removeItem('talkify_token');
+            window.location.reload();
+          }, 1500);
         } else {
           setErrorMsg(`Search failed: HTTP ${res.status}`);
         }

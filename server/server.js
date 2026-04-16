@@ -10,7 +10,7 @@ const path = require('path');
 const fs = require('fs');
 const { getDb } = require('./db');
 
-const JWT_SECRET = process.env.JWT_SECRET || 'talkify_v2_super_secret_key';
+const JWT_SECRET = process.env.JWT_SECRET || 'talkify_v2_super_secret_key_change_me';
 const PORT = process.env.PORT || 8080;
 
 const app = express();
