@@ -36,3 +36,11 @@ TalkifyAndroid/local.properties
 *.apk
 *.aab
 .idea/
+
+# Flutter
+TalkifyFlutter/build/
+TalkifyFlutter/.dart_tool/
+TalkifyFlutter/.flutter-plugins
+TalkifyFlutter/.flutter-plugins-dependencies
+TalkifyFlutter/flutter/
+TalkifyFlutter/*.txt

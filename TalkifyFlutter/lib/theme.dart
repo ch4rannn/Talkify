@@ -27,10 +27,8 @@ class TealMidnightTheme {
         primary: accent,
         secondary: accentDim,
         surface: surface,
-        background: background,
         onPrimary: textOnAccent,
         onSurface: textPrimary,
-        onBackground: textPrimary,
       ),
       appBarTheme: const AppBarTheme(
         backgroundColor: surface,
@@ -43,7 +41,7 @@ class TealMidnightTheme {
           fontWeight: FontWeight.bold,
         ),
       ),
-      cardTheme: const CardTheme(
+      cardTheme: const CardThemeData(
         color: surface,
         elevation: 0,
       ),
