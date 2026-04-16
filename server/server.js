@@ -340,10 +340,12 @@ wss.on('connection', async (ws, req) => {
   }
 
   let currentUserId = null;
+  let currentUsername = null;
   
   try {
     const decoded = jwt.verify(token, JWT_SECRET);
     currentUserId = decoded.id;
+    currentUsername = decoded.username;
     
     if (!connectedUsers.has(currentUserId)) {
       connectedUsers.set(currentUserId, new Set());
@@ -442,7 +444,7 @@ wss.on('connection', async (ws, req) => {
         const { targetUserId, callType, roomID } = message.payload;
         sendToUser(targetUserId, JSON.stringify({
           type: 'INCOMING_CALL',
-          payload: { fromUserId: currentUserId, fromName: decoded.username, callType, roomID }
+          payload: { fromUserId: currentUserId, fromName: currentUsername, callType, roomID }
         }));
       }
       else if (message.type === 'CANCEL_CALL') {
